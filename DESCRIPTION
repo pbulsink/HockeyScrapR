@@ -1,0 +1,16 @@
+Package: HockeyScrapR
+Type: Package
+Title: Tools to scrape hockey data
+Version: 0.1
+Date: 2017-01-06
+Author: Philip Bulsink
+Maintainer: Philip Bulsink <bulsinkp@gmail.com>
+Description: Tools to scrape data from Hockey-Reference.com, and DailyFaceoff.com.
+License: MIT + file LICENSE
+Imports:
+    RCurl,
+    plyr,
+    stringr,
+    XML,
+    utils
+RoxygenNote: 5.0.1
