@@ -6,7 +6,6 @@
 #' \item{Team}{The team}
 #' \item{Player}{The name of the Forward, Defence or Goalie playing}
 #' \item{updateDate}{The date the Team's page was updated}
-#' @export
 getCurrentRosters <- function(sleep = 30) {
   teamUrlList <- data.frame(URL = c("http://www2.dailyfaceoff.com/teams/lines/13/anaheim-ducks/", 
     "http://www2.dailyfaceoff.com/teams/lines/35/arizona-coyotes", "http://www2.dailyfaceoff.com/teams/lines/15/boston-bruins/", 

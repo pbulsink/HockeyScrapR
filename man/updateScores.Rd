@@ -2,16 +2,25 @@
 % Please edit documentation in R/scrapeScores.R
 \name{updateScores}
 \alias{updateScores}
-\title{Update score information (don't rescrape old scores)}
+\title{Update scores information (don't rescrape old scores).}
 \usage{
-updateScores(data_dir = "./data/players/", ...)
+updateScores(score_data, data_dir = "./data/scores/", ...)
 }
 \arguments{
-\item{data_dir}{The data dir of stored score information}
+\item{score_data}{The player_data data.frame to update}
+
+\item{data_dir}{The data dir of stored player information}
 
 \item{...}{Additional parameters to pass}
 }
+\value{
+updated scores information data.frame
+}
 \description{
-Update score information (don't rescrape old scores)
+Update scores information (don't rescrape old scores).
+}
+\examples{
+\dontrun{updateScores()}
+\dontrun{updatePlayers(data_dir = "./data/", years_back=2}
 }
 

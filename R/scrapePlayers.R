@@ -529,6 +529,7 @@ scrapePlayers <- function(data_dir = "./data/players/", ...) {
 #' @param player_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
 #' @param years_back The number of years to go back (will scrape all players currently active + past \code{years_back} years)
+#' @param player_list Optional player list to scrape from (default NULL --> get updated player list)
 #' @param ... Additional parameters to pass
 #'
 #' @return a list of three updated cleaned data.frames, containing
@@ -540,9 +541,11 @@ scrapePlayers <- function(data_dir = "./data/players/", ...) {
 #' @examples
 #' \dontrun{updatePlayers()}
 #' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
-updatePlayers <- function(player_data, data_dir = "./data/players/", years_back=1, ...) {
-
-    player_list <- getPlayerList(...)
+updatePlayers <- function(player_data, data_dir = "./data/players/", years_back=1, player_list = NULL, ...) {
+    
+    if(is.null(player_list)){
+        player_list <- getPlayerList(...)
+    }
     active <- player_list$Active
     active[active == ""] <- "0-0"
     active[is.na(active)] <- "0-0"

@@ -5,7 +5,7 @@
 \title{Update player information (don't rescrape old players).}
 \usage{
 updatePlayers(player_data, data_dir = "./data/players/", years_back = 1,
-  ...)
+  player_list = NULL, ...)
 }
 \arguments{
 \item{player_data}{The player_data data.frame to update}
@@ -13,6 +13,8 @@ updatePlayers(player_data, data_dir = "./data/players/", years_back = 1,
 \item{data_dir}{The data dir of stored player information}
 
 \item{years_back}{The number of years to go back (will scrape all players currently active + past \code{years_back} years)}
+
+\item{player_list}{Optional player list to scrape from (default NULL --> get updated player list)}
 
 \item{...}{Additional parameters to pass}
 }
