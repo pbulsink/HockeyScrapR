@@ -41,7 +41,7 @@ getPlayerList <- function(sleep = 30) {
 #' @return a list of data.frames containing
 #' \item{Tables}{Player Statistics Tables from HTML Page}
 #' \item{Metas}{Player Meta information (Name, Birth, Height, Weight, Shot, etc.)}
-#' 
+#'
 #' @keywords internal
 scrapePlInfo <- function(url) {
   htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
@@ -236,7 +236,7 @@ getPlayerStats <- function(player_list, sleep = 30) {
   plist <- player_list[player_list$BlnNHL == TRUE, ]
   pretry <- NULL
   pdrop <- NULL
-  if (length(plist) == 0)
+  if (nrow(plist) == 0)
     return(NULL)
   pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
   player <- 1
@@ -273,9 +273,9 @@ getPlayerStats <- function(player_list, sleep = 30) {
       } else {
         player_stats_tables <- plyr::rbind.fill(player_stats_tables, tables)
       }
-      player_meta_tables <- plyr::rbind.fill(player_meta_tables, 
+      player_meta_tables <- plyr::rbind.fill(player_meta_tables,
                                              data.frame(Name = pname,
-                                                        Active = plist[player, "Active"], 
+                                                        Active = plist[player, "Active"],
                                                         t(unlist(scrape[[2]]))))
     }
     utils::setTxtProgressBar(pb, player, )
@@ -325,7 +325,7 @@ scrapeByAlphabet <- function(player_list, letters_to_scrape = letters, long_slee
 #' @return TRUE, or the player data.frame, if successful
 #' @export
 #' @keywords internal
-combinePlayerDataFrames <- function(directory = "./data/players/", 
+combinePlayerDataFrames <- function(directory = "./data/players/",
                                     return_data_frame = TRUE) {
   message("Combining all player data to one object")
   ldf <- list()
@@ -338,8 +338,9 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
       meta[[letter]] <- ldf[[letter]][[3]]
       goalies[[letter]] <- ldf[[letter]][[2]]
       players[[letter]] <- ldf[[letter]][[1]]
+      file.remove(paste0(directory, "players_", letter, ".RDS"))
     },
-    error = function(e) message("Error reading file players_", letter, ".RDS: ", 
+    error = function(e) message("Error reading file players_", letter, ".RDS: ",
       e, "Continuing..."))
   }
   all_players <- plyr::rbind.fill(players)
@@ -347,7 +348,14 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
   all_meta <- plyr::rbind.fill(meta)
   all_df <- list(PlayerStats = all_players, GoalieStats = all_goalies, PlayerMeta = all_meta)
   saveRDS(all_df, paste0(directory, "allPlayers.RDS"))
-  if (return_data_frame) 
+  for (letter in letters){
+     tryCatch({
+          file.remove(paste0(directory, "players_", letter, ".RDS"))
+      },
+      error = function(e) message("Error deleting file players_", letter, ".RDS: ",
+                                  e, "Continuing..."))
+  }
+  if (return_data_frame)
     return(all_df)
   return(TRUE)
 }
@@ -368,11 +376,11 @@ processPlayerData <- function(player_data, drop_awards = TRUE) {
   players <- player_data[[1]]
   goalies <- player_data[[2]]
   meta <- player_data[[3]]
-  
+
   # Undo factors
-  numeric_columns <- c("Age", "GP", "G", "A", "PTS", "+/-", "PIM", "EV.Goals", 
-    "PP.Goals", "SH.Goals", "GW", "EV.Assists", "PP.Assists", "SH.Assists", "S", 
-    "S%", "TOI", "GC", "Adj.G", "Adj.A", "Adj.PTS", "Adj.GC", "TSA", "OPS", "DPS", 
+  numeric_columns <- c("Age", "GP", "G", "A", "PTS", "+/-", "PIM", "EV.Goals",
+    "PP.Goals", "SH.Goals", "GW", "EV.Assists", "PP.Assists", "SH.Assists", "S",
+    "S%", "TOI", "GC", "Adj.G", "Adj.A", "Adj.PTS", "Adj.GC", "TSA", "OPS", "DPS",
     "PS", "FOW", "FOL", "FO%", "HIT", "BLK", "TK", "GV", "CF", "CA", "CF%", "CF%rel",
     "FF", "FA", "FF%", "FF%rel", "oiSH%", "oiSV%", "PDO", "oZS%", "dZS%", "GS",
     "W", "L", "T/O", "GA", "SA", "SV", "SV%", "GAA", "SO", "MIN", "QS", "QS%",
@@ -460,7 +468,7 @@ processPlayerData <- function(player_data, drop_awards = TRUE) {
   players <- players[with(players, order(Name, Age, Lg, Team, Playoffs)), ]
   goalies <- goalies[with(goalies, order(Name, Age, Lg, Team, Playoffs)), ]
   meta <- meta[with(meta, order(Name, Birthdate)), ]
- 
+
   # Refactor Select Columns
   meta$Name <- factor(meta$Name)
   meta$Country <- gsub("&amp", "", meta$Country)
@@ -484,12 +492,12 @@ processPlayerData <- function(player_data, drop_awards = TRUE) {
   goalies$Team <- factor(goalies$Team, levels = levels(players$Team))
   goalies$Lg <- factor(goalies$Lg, levels = levels(players$Lg))
   goalies$Name <- factor(goalies$Name, levels = levels(meta$Name))
-  
+
   return(list(PlayerStats = players, GoalieStats = goalies, PlayerMeta = meta))
 }
 
 #' Scrape and clean all player data
-#' 
+#'
 #' This is a one-command function to scrape and clean all player data available from Hockey-Reference.com. This takes many hours.
 #' Also saves results to a dated .RDS file.
 #'
@@ -516,10 +524,51 @@ scrapePlayers <- function(data_dir = "./data/players/", ...) {
   return(player_data)
 }
 
-#' Update player information (don't rescrape old players)
-#' 
+#' Update player information (don't rescrape old players).
+#'
+#' @param player_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
+#' @param years_back The number of years to go back (will scrape all players currently active + past \code{years_back} years)
 #' @param ... Additional parameters to pass
-updatePlayers <- function(data_dir = "./data/players/", ...) {
-  NULL
+#'
+#' @return a list of three updated cleaned data.frames, containing
+#' \item{PlayerStats}{Combined player statistics}
+#' \item{GoalieStats}{Combined goalie statistics}
+#' \item{PlayerMeta}{Meta statistics for all (goalies and players)}
+#' @export
+#'
+#' @examples
+#' \dontrun{updatePlayers()}
+#' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+updatePlayers <- function(player_data, data_dir = "./data/players/", years_back=1, ...) {
+
+    player_list <- getPlayerList(...)
+    active <- player_list$Active
+    active[active == ""] <- "0-0"
+    active[is.na(active)] <- "0-0"
+    player_list$ActiveEnd <- unlist(lapply(active,
+                                           function(x) as.numeric(unlist(strsplit(x,"-")))[2]))
+    update_players<-player_list[player_list$ActiveEnd >= as.numeric(format(Sys.Date(), "%Y"))-years_back,]
+    update_players$ActiveEnd <- NULL
+
+    new_player_data<-player_data[[1]]
+    new_goalie_data<-player_data[[2]]
+    new_meta<-player_data[[3]]
+
+    new_player_data<-new_player_data[!new_player_data$Name %in% unique(update_players$Name), ]
+    new_goalie_data<-new_goalie_data[!new_goalie_data$Name %in% unique(update_players$Name), ]
+    new_meta<-new_player_data[!new_meta$Name %in% unique(update_players$Name), ]
+
+    p<-scrapeByAlphabet(player_list = update_players, directory = data_dir, ...)
+    p_player<-p[[1]]
+    p_goalie<-p[[2]]
+    p_meta<-p[[3]]
+    p_player<-plyr::rbind.fill(p_player, new_player_data)
+    p_goalie<-plyr::rbind.fill(p_goalie, new_goalie_data)
+    p_meta<-plyr::rbind.fill(p_meta, new_meta)
+    p<-list(PlayerStats = p_player, GoalieStats = p_goalie, PlayerMeta = p_meta)
+
+    new_player_data <- processPlayerData(p, ...)
+    saveRDS(new_player_data, paste0(data_dir, "allPlayers-", Sys.Date(), ".RDS"))
+    return(new_player_data)
 }
