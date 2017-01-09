@@ -1,6 +1,7 @@
 # Hockey Data Scraping
 
-[![Build Status](https://travis-ci.org/pbulsink/HockeyScrapR.svg?branch=master)](https://travis-ci.org/pbulsink/HockeyScrapR)
+[![Master Build Status](https://travis-ci.org/pbulsink/HockeyScrapR.svg?branch=master)](https://travis-ci.org/pbulsink/HockeyScrapR)
+[![Dev Build Status](https://travis-ci.org/pbulsink/HockeyScrapR.svg?branch=dev)](https://travis-ci.org/pbulsink/HockeyScrapR)
 
 This is a package to simplify getting data from assorted websites including HockeyReference.com and Dailyfaceoff.com. 
 

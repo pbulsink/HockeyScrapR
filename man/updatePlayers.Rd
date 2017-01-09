@@ -2,16 +2,33 @@
 % Please edit documentation in R/scrapePlayers.R
 \name{updatePlayers}
 \alias{updatePlayers}
-\title{Update player information (don't rescrape old players)}
+\title{Update player information (don't rescrape old players).}
 \usage{
-updatePlayers(data_dir = "./data/players/", ...)
+updatePlayers(player_data, data_dir = "./data/players/", years_back = 1,
+  player_list = NULL, ...)
 }
 \arguments{
+\item{player_data}{The player_data data.frame to update}
+
 \item{data_dir}{The data dir of stored player information}
+
+\item{years_back}{The number of years to go back (will scrape all players currently active + past \code{years_back} years)}
+
+\item{player_list}{Optional player list to scrape from (default NULL --> get updated player list)}
 
 \item{...}{Additional parameters to pass}
 }
+\value{
+a list of three updated cleaned data.frames, containing
+\item{PlayerStats}{Combined player statistics}
+\item{GoalieStats}{Combined goalie statistics}
+\item{PlayerMeta}{Meta statistics for all (goalies and players)}
+}
 \description{
-Update player information (don't rescrape old players)
+Update player information (don't rescrape old players).
+}
+\examples{
+\dontrun{updatePlayers()}
+\dontrun{updatePlayers(data_dir = "./data/", years_back=2}
 }
 

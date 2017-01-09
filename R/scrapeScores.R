@@ -351,13 +351,27 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
   getAndSaveNHLGames(data_dir = data_dir, ...)
   hockey_data <- readHockeyData(data_dir = data_dir, ...)
   saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
-  return
+  return(hockey_data)
 }
 
-#' Update score information (don't rescrape old scores)
-#' 
-#' @param data_dir The data dir of stored score information
+#' Update scores information (don't rescrape old scores).
+#'
+#' @param score_data The player_data data.frame to update
+#' @param data_dir The data dir of stored player information
 #' @param ... Additional parameters to pass
-updateScores <- function(data_dir = "./data/players/", ...) {
-  NULL
+#'
+#' @return updated scores information data.frame
+#' @export
+#'
+#' @examples
+#' \dontrun{updateScores()}
+#' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
+    last_score_date<-max(score_data$Date)
+    getAndSaveNHLGames(data_dir = data_dir, start = as.numeric(format(last_score_date, "%Y")), ...)
+    hockey_data <- readHockeyData(data_dir = data_dir, ...)
+    saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
+    return(hockey_data)
 }
+
+
