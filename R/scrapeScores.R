@@ -366,7 +366,9 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #' @examples
 #' \dontrun{updateScores()}
 #' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
     last_score_date<-max(score_data$Date)
+    getAndSaveNHLGames(data_dir = data_dir, start = as.numeric(format(last_score_date, "%Y")), ...)
     hockey_data <- readHockeyData(data_dir = data_dir, ...)
     saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
     return(hockey_data)
