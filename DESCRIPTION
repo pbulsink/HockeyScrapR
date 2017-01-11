@@ -13,4 +13,6 @@ Imports:
     stringr,
     XML,
     utils
+Suggests:
+    testthat
 RoxygenNote: 5.0.1
