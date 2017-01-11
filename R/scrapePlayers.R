@@ -305,7 +305,9 @@ scrapeByAlphabet <- function(player_list, letters_to_scrape = letters, long_slee
     message(paste0("Getting Players with last name of ", toupper(letter), "."))
     ps <- getPlayerStats(player_list[startsWith(player_list$URL, paste0("/players/",
       letter)), ], ...)
-    saveRDS(ps, paste0(directory, "players_", letter, ".RDS"))
+    if(!is.null(ps)){
+        saveRDS(ps, paste0(directory, "players_", letter, ".RDS"))
+    }
     Sys.sleep(long_sleep)
   }
   gc(verbose = FALSE)
@@ -340,8 +342,7 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
       players[[letter]] <- ldf[[letter]][[1]]
       file.remove(paste0(directory, "players_", letter, ".RDS"))
     },
-    error = function(e) message("Error reading file players_", letter, ".RDS: ",
-      e, "Continuing..."))
+    error = function(e) message("Error reading file players_", letter, ".RDS, Continuing..."))
   }
   all_players <- plyr::rbind.fill(players)
   all_goalies <- plyr::rbind.fill(goalies)
@@ -542,7 +543,7 @@ scrapePlayers <- function(data_dir = "./data/players/", ...) {
 #' \dontrun{updatePlayers()}
 #' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
 updatePlayers <- function(player_data, data_dir = "./data/players/", years_back=1, player_list = NULL, ...) {
-    
+
     if(is.null(player_list)){
         player_list <- getPlayerList(...)
     }
