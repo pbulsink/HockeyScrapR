@@ -1,14 +1,3 @@
-#' testthat
-#' scrapeplinfo (1 of 4 players)
-#' returns
-#' 1 of four players' tables
-#'
-#' testthat
-#' updatePlayerInfo (given old player) gets new player
-#'
-#' testthat
-#' scrape
-#'
 context("Testing getURL handles ok")
 
 test_that("Test getURLInternal Returns HTML Page", {

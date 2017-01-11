@@ -3,6 +3,7 @@
 #' Download the full list of active and past players from Hockey-Reference.com
 #'
 #' @param sleep The sleep time between scrape requests
+#' @param letters The letters to scrape player names from. Default: \code{letters}
 #'
 #' @return a data.frame containing:
 #' \item{Complete}{The complete line that data was scraped from}
@@ -11,7 +12,7 @@
 #' \item{Name}{Player Name}
 #' \item{Active}{Whether the player is currently active}
 #' @export
-getPlayerList <- function(sleep = 30) {
+getPlayerList <- function(sleep = 30, letters=letters) {
   pattern <- "<p class=\"([a-z\\_]+)\">(?:<strong>)*<a href=\"(\\/players\\/[a-z]+\\/[a-zA-Z0-9]+\\.html)\">([a-zA-Z ]+)<\\/a>(?:<\\/strong>)*\\s*\\(([0-9-]+)*"
   player_list <- data.frame(Complete = character(), BlnNHL = character(),
                             URL = character(), Name = character(),
@@ -239,8 +240,9 @@ getPlayerStats <- function(player_list, sleep = 30) {
   if (nrow(plist) == 0)
     return(NULL)
   pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
-  player <- 1
-  while (player <= nrow(plist)) {
+  player <- 0
+  while (player < nrow(plist)) {
+    player <- player + 1
     # prep HTML
     url <- paste0("http://www.hockey-reference.com", plist[player, "URL"])
 
