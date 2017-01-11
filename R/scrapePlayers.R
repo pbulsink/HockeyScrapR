@@ -258,7 +258,7 @@ getPlayerStats <- function(player_list, sleep = 30) {
     if (is.null(scrape)) {
       if (pname %in% pretry) {
         pdrop <- c(pdrop, pname)
-        warning(paste0("Error getting ", pname, "'s record. Retry failed"))
+        message(paste0("Error getting ", pname, "'s record. Retry failed"))
       } else {
         plist <- rbind(plist, plist[player])
         pretry <- c(pretry, pname)
@@ -324,13 +324,14 @@ scrapeByAlphabet <- function(player_list, letters_to_scrape = letters, long_slee
 #' Easily combine player data.frames into one single RDS file.
 #'
 #' @param directory The directory where data files are stored. Default './data/players/'
-#' @param return_data_frame
+#' @param return_data_frame Boolean, whether to return data or 'TRUE' when complete
+#' @param ... Additional parameters to pass
 #'
 #' @return TRUE, or the player data.frame, if successful
 #' @export
 #' @keywords internal
 combinePlayerDataFrames <- function(directory = "./data/players/",
-                                    return_data_frame = TRUE) {
+                                    return_data_frame = TRUE, ...) {
   message("Combining all player data to one object")
   ldf <- list()
   meta <- list()
@@ -338,13 +339,15 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
   goalies <- list()
   for (letter in letters) {
     tryCatch({
-      ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
-      meta[[letter]] <- ldf[[letter]][[3]]
-      goalies[[letter]] <- ldf[[letter]][[2]]
-      players[[letter]] <- ldf[[letter]][[1]]
-      file.remove(paste0(directory, "players_", letter, ".RDS"))
-    },
-    error = function(e) message("Error reading file players_", letter, ".RDS, Continuing..."))
+          ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
+        },
+        error = function(e) message("Error opening file players_", letter, ".RDS, Skipping..."),
+        warning = function(w) message("Warning opening file players_", letter, ".RDS, Continuing..."))
+      if(!is.null(meta[[letter]])){
+          meta[[letter]] <- ldf[[letter]][[3]]
+          goalies[[letter]] <- ldf[[letter]][[2]]
+          players[[letter]] <- ldf[[letter]][[1]]
+      }
   }
   all_players <- plyr::rbind.fill(players)
   all_goalies <- plyr::rbind.fill(goalies)
@@ -353,10 +356,9 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
   saveRDS(all_df, paste0(directory, "allPlayers.RDS"))
   for (letter in letters){
      tryCatch({
-          file.remove(paste0(directory, "players_", letter, ".RDS"))
+          file.remove(paste0(directory, "players_", letter, ".RDS"), showWarnings = FALSE)
       },
-      error = function(e) message("Error deleting file players_", letter, ".RDS: ",
-                                  e, "Continuing..."))
+      error = function(e) message("Error deleting file players_", letter, ".RDS, Continuing..."))
   }
   if (return_data_frame)
     return(all_df)
@@ -484,7 +486,8 @@ processPlayerData <- function(player_data, drop_awards = TRUE) {
   meta$BirthPlace <- gsub("&nbsp;", " ", meta$BirthPlace)
   meta$BirthPlace <- factor(meta$BirthPlace)
   meta$DraftTeam <- factor(meta$DraftTeam)
-  meta$ReDraftTeam <- factor(meta$ReDraftTeam, levels = levels(meta$DraftTeam))
+  if('ReDraftTeam' %in% colnames(meta))
+    meta$ReDraftTeam <- factor(meta$ReDraftTeam, levels = levels(meta$DraftTeam))
 
   players$Season <- factor(players$Season, ordered = TRUE)
   players$Team <- factor(players$Team)

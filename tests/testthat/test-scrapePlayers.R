@@ -7,26 +7,33 @@
 #' updatePlayerInfo (given old player) gets new player
 
 context("Testing scraping player data")
-source("./tests/testthat/helper-scrapePlayers.R")
+source("helper-scrapePlayers.R")
 
-test_that("getPlayerList", {
-    player_list<-getPlayerList(sleep=0, letters='a')
-    
-    expect_named(player_list, pl_names)
-    expect_equivalent(player_list[1,], pl_aa)
+test_that("getPlayerList returns ok", {
+  player_list <- getPlayerList(sleep = 0, letters = "a")
+
+  expect_named(player_list, pl_names)
+  expect_equivalent(player_list[1, ], pl_aa)
 })
 
 test_that("Players are properly scraped", {
-    #Use this stable player list
-    pchoice<-sample(1:10, 2)
-    
-    #ideally just sample 2 players, extract from player_stats
-    pstats<-getPlayerStats(player_list[], sleep=10)
-    
-    
-    expect_equivalent(pstats, player_stats)
+  pstats <- getPlayerStats(player_list[], sleep = 10)
+
+  expect_type(pstats, "list")
+  expect_equivalent(pstats, player_stats)
 })
 
-test_that("", {
-    
+test_that("Scraping Player by Alphabet works", {
+  player_ab <- scrapeByAlphabet(pl_ab, long_sleep = 0, sleep = 10, directory = "./")
+
+  expect_equivalent(player_ab, player_ab_data)
+  expect_true(file.exists("./allPlayers.RDS"))
+  try(file.remove("./allPlayers.RDS"))
+})
+
+test_that("Player Processing Works", {
+  p_data <- processPlayerData(player_stats)
+
+  expect_type(p_data, "list")
+  #expect_equivalent(p_data, processed_player_data)
 })

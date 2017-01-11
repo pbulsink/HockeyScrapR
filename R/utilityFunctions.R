@@ -16,7 +16,7 @@ getURLInternal <- function(url, referer = "http://www.google.com") {
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36")
-    htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
+    htmlpage <- try(RCurl::getURL(url, header = TRUE, .opts = RCurl::curlOptions(referer = referer,
                                                                            header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8,
                                                                                                                                            1)])),
                     silent=TRUE)
@@ -25,7 +25,7 @@ getURLInternal <- function(url, referer = "http://www.google.com") {
         message(paste0("HTML Try Error on: ", url))
         htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
                                                                            header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8,
-                                                                                                                                           1)])))
+                                                                                                                                           1)])), silent = TRUE)
     }
     return(htmlpage)
 }

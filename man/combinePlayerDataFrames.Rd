@@ -6,12 +6,14 @@
 Easily combine player data.frames into one single RDS file.}
 \usage{
 combinePlayerDataFrames(directory = "./data/players/",
-  return_data_frame = TRUE)
+  return_data_frame = TRUE, ...)
 }
 \arguments{
 \item{directory}{The directory where data files are stored. Default './data/players/'}
 
-\item{return_data_frame}{}
+\item{return_data_frame}{Boolean, whether to return data or 'TRUE' when complete}
+
+\item{...}{Additional parameters to pass}
 }
 \value{
 TRUE, or the player data.frame, if successful
