@@ -29,12 +29,36 @@ test_that("Scraping Player by Alphabet works", {
   expect_true(file.exists("./allPlayers.RDS"))
   expect_false(file.exists("./players_a.RDS"))
   expect_false(file.exists("./players_b.RDS"))
-  try(file.remove("./allPlayers.RDS"))
+  f<-"./allPlayers.RDS"
+  if(file.exists(f)){
+      tryCatch({
+          file.remove(f, showWarnings = FALSE)
+      },
+      error = function(e) message("Error deleting file ",f,", Continuing..."))
+  }
 })
 
 test_that("Player Processing Works", {
   p_data <- processPlayerData(player_stats)
 
   expect_type(p_data, "list")
-  #expect_equivalent(p_data, processed_player_data)
+  expect_equivalent(p_data, processed_player_data)
+})
+
+test_that("Updates Work",{
+    p_new<-updatePlayers(pl_data_oldnew, data_dir = "./", player_list = pl_list_oldnew, sleep=5, long_sleep=0)
+    
+    p<-p_new[[1]]
+    
+    expect_equal(sum(p$Season == "2016-17"),1)
+    
+    f<-paste0("./allPlayers-", Sys.Date(), ".RDS")
+    expect_true(file.exists(f))
+    if(file.exists(f)){
+        tryCatch({
+            file.remove(f, showWarnings = FALSE)
+        },
+        error = function(e) message("Error deleting file ",f,", Continuing..."))
+    }
+    
 })

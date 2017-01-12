@@ -341,8 +341,7 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
     tryCatch({
           ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
         },
-        error = function(e) message("Error opening file players_", letter, ".RDS, Skipping..."),
-        warning = function(w) message("Warning opening file players_", letter, ".RDS, Continuing..."))
+        error = function(e) message("Error opening file players_", letter, ".RDS, Skipping..."))
       if(!is.null(ldf[[letter]])){
           meta[[letter]] <- ldf[[letter]][[3]]
           goalies[[letter]] <- ldf[[letter]][[2]]
@@ -355,10 +354,13 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
   all_df <- list(PlayerStats = all_players, GoalieStats = all_goalies, PlayerMeta = all_meta)
   saveRDS(all_df, paste0(directory, "allPlayers.RDS"))
   for (letter in letters){
-     tryCatch({
-          file.remove(paste0(directory, "players_", letter, ".RDS"), showWarnings = FALSE)
-      },
-      error = function(e) message("Error deleting file players_", letter, ".RDS, Continuing..."))
+      f<-paste0(directory, "players_", letter, ".RDS")
+      if(file.exists(f)){
+          tryCatch({
+              file.remove(f, showWarnings = FALSE)
+          },
+          error = function(e) message("Error deleting file ",f,", Continuing..."))
+      }
   }
   if (return_data_frame)
     return(all_df)
@@ -370,6 +372,7 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
 #'
 #' @param player_data The player_data to clean up
 #' @param drop_awards Whether to drop awards column.
+#' @param ... Additional parameters to pass
 #'
 #' @return a list of three cleaned data.frames, containing
 #' \item{PlayerStats}{Combined player statistics}
@@ -377,7 +380,7 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
 #' \item{PlayerMeta}{Meta statistics for all (goalies and players)}
 #' @export
 
-processPlayerData <- function(player_data, drop_awards = TRUE) {
+processPlayerData <- function(player_data, drop_awards = TRUE, ...) {
   players <- player_data[[1]]
   goalies <- player_data[[2]]
   meta <- player_data[[3]]
