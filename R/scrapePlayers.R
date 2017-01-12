@@ -343,7 +343,7 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
         },
         error = function(e) message("Error opening file players_", letter, ".RDS, Skipping..."),
         warning = function(w) message("Warning opening file players_", letter, ".RDS, Continuing..."))
-      if(!is.null(meta[[letter]])){
+      if(!is.null(ldf[[letter]])){
           meta[[letter]] <- ldf[[letter]][[3]]
           goalies[[letter]] <- ldf[[letter]][[2]]
           players[[letter]] <- ldf[[letter]][[1]]

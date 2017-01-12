@@ -1,9 +1,4 @@
 #' testthat
-#' scrapeplinfo (1 of 4 players)
-#' returns
-#' 1 of four players' tables
-#'
-#' testthat
 #' updatePlayerInfo (given old player) gets new player
 
 context("Testing scraping player data")
@@ -24,10 +19,16 @@ test_that("Players are properly scraped", {
 })
 
 test_that("Scraping Player by Alphabet works", {
-  player_ab <- scrapeByAlphabet(pl_ab, long_sleep = 0, sleep = 10, directory = "./")
+  player_ab <- scrapeByAlphabet(pl_ab, long_sleep = 0, sleep = 10, directory = "./", combine = FALSE)
+  expect_true(player_ab)
+  expect_true(file.exists("./players_a.RDS"))
+  expect_true(file.exists("./players_b.RDS"))
+  player_ab <- combinePlayerDataFrames(directory="./")
 
   expect_equivalent(player_ab, player_ab_data)
   expect_true(file.exists("./allPlayers.RDS"))
+  expect_false(file.exists("./players_a.RDS"))
+  expect_false(file.exists("./players_b.RDS"))
   try(file.remove("./allPlayers.RDS"))
 })
 
