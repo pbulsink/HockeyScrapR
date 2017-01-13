@@ -338,14 +338,20 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
   players <- list()
   goalies <- list()
   for (letter in letters) {
-    tryCatch({
-          ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
-        },
-        error = function(e) message("Error opening file players_", letter, ".RDS, Skipping..."))
-      if(!is.null(ldf[[letter]])){
-          meta[[letter]] <- ldf[[letter]][[3]]
-          goalies[[letter]] <- ldf[[letter]][[2]]
-          players[[letter]] <- ldf[[letter]][[1]]
+      f<-paste0(directory, "players_", letter, ".RDS")
+      if (file.exists(f)){
+        tryCatch({
+              ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
+            },
+            error = function(e) message(paste0("Error opening file players_", letter, ".RDS, Skipping...")))
+          if(!is.null(ldf[[letter]])){
+              meta[[letter]] <- ldf[[letter]][[3]]
+              goalies[[letter]] <- ldf[[letter]][[2]]
+              players[[letter]] <- ldf[[letter]][[1]]
+          }
+      }
+      else{
+          message(paste0("File '",f,"' does not exist."))
       }
   }
   all_players <- plyr::rbind.fill(players)
@@ -357,9 +363,9 @@ combinePlayerDataFrames <- function(directory = "./data/players/",
       f<-paste0(directory, "players_", letter, ".RDS")
       if(file.exists(f)){
           tryCatch({
-              file.remove(f, showWarnings = FALSE)
+              file.remove(f)
           },
-          error = function(e) message("Error deleting file ",f,", Continuing..."))
+          error = function(e) print(paste0("Error deleting file ",f,", Continuing...")))
       }
   }
   if (return_data_frame)
