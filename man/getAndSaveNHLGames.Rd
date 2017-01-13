@@ -8,9 +8,9 @@ getAndSaveNHLGames(start = 1918, end = 2017, sleep = 30,
   data_dir = "./data/scores/")
 }
 \arguments{
-\item{start}{Starting year to download}
+\item{start}{Starting season to download. Season is \code{value-1 to value} (eg. start=1918 --> 1917-1918 season)}
 
-\item{end}{Last year to download}
+\item{end}{Last season to download}
 
 \item{sleep}{Time to sleep between scrapes}
 

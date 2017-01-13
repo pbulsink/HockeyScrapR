@@ -8,9 +8,9 @@ getAndSaveWHAGames(start = 1973, end = 1979, sleep = 30,
   data_dir = "./data/scores/")
 }
 \arguments{
-\item{start}{Starting year to download}
+\item{start}{Starting season to download. Season is \code{value-1 to value} (eg. start=1973 --> 1972-1973 season)}
 
-\item{end}{Last year to download}
+\item{end}{Last season to download}
 
 \item{sleep}{Time to sleep between scrapes}
 

@@ -15,7 +15,7 @@ scrapeScores(data_dir = "./data/scores/", ...)
 scores information data.frame
 }
 \description{
-This is a one-command function to scrape and clean all score data available from Hockey-Reference.com. 
+This is a one-command function to scrape and clean all score data available from Hockey-Reference.com.
 Also saves results to a dated .RDS file.
 }
 \examples{
