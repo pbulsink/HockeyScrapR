@@ -30,3 +30,10 @@ getURLInternal <- function(url, referer = "http://www.google.com") {
     return(htmlpage)
 }
 
+getCurrentSeason<-function(){
+  year<-as.numeric(format(Sys.Date(), '%Y'))
+  if(as.numeric(format(Sys.Date(), '%m')) >=8){
+    year<-year +1
+  }
+  return(year)
+}
