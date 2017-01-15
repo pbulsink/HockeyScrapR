@@ -1,3 +1,4 @@
+#helper for scrape Score testing
 try_delete <- function(f) {
   if (file.exists(f)) {
     tryCatch({

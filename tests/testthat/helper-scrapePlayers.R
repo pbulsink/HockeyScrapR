@@ -1,4 +1,11 @@
 # Helper Data for test-scrapePlayers
+try_delete <- function(f) {
+  if (file.exists(f)) {
+    tryCatch({
+      file.remove(f)
+    }, error = function(e) message(paste0("Error deleting file ", f, ", Continuing...")))
+  }
+}
 
 pl_aa <- structure(list(Complete = "<p class=\"nhl\"><a href=\"/players/a/aaltoan01.html\">Antti Aalto</a> (1998-2001", BlnNHL = structure(2L,
   .Label = c("FALSE", "TRUE"), class = "factor"), URL = "/players/a/aaltoan01.html", Name = "Antti Aalto", Active = "1998-2001"),

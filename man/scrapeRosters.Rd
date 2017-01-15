@@ -15,7 +15,7 @@ scrapeRosters(data_dir = "./data/rosters/", ...)
 roster information data.frame
 }
 \description{
-This is a one-command function to scrape all roster data available from DailyFaceoff.com. 
+This is a one-command function to scrape all roster data available from DailyFaceoff.com.
 Also saves results to a dated .RDS file.
 }
 \examples{
