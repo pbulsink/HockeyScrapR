@@ -14,3 +14,11 @@ test_that("Test bad getURLInternal Throws Messages", {
   expect_true(class(urlscraped) == "try-error")
   expect_message(getURLInternal("http://notarealwebpage.thisisntone/nope"), "HTML Try Error on:")
 })
+
+test_that("Get Current Season works",{
+  actual_season = as.numeric(format(Sys.Date(), '%Y')) + 1
+  if(as.numeric(format(Sys.Date(), '%m')) < 8){
+    actual_season = actual_season -1
+  }
+  expect_equal(getCurrentSeason(), actual_season)
+})
