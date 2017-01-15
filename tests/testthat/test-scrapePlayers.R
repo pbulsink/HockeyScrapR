@@ -29,12 +29,12 @@ test_that("Scraping Player by Alphabet works", {
   expect_true(file.exists("./allPlayers.RDS"))
   expect_false(file.exists("./players_a.RDS"))
   expect_false(file.exists("./players_b.RDS"))
-  f<-"./allPlayers.RDS"
-  if(file.exists(f)){
+  f1<-"./allPlayers.RDS"
+  if(file.exists(f1)){
       tryCatch({
-          file.remove(f, showWarnings = FALSE)
+          file.remove(f1, showWarnings = FALSE)
       },
-      error = function(e) message(paste0("Error deleting file ",f,", Continuing...")))
+      error = function(e) message(paste0("Error deleting file ",f1,", Continuing...")))
   }
 })
 
@@ -62,13 +62,13 @@ test_that("Updates Work",{
 
     expect_equal(sum(p$Season == "2016-17"),1)
 
-    f<-paste0("./allPlayers-", Sys.Date(), ".RDS")
-    expect_true(file.exists(f))
-    if(file.exists(f)){
+    f1<-paste0("./allPlayers-", Sys.Date(), ".RDS")
+    expect_true(file.exists(f1))
+    if(file.exists(f1)){
         tryCatch({
-            file.remove(f, showWarnings = FALSE)
+            file.remove(f1, showWarnings = FALSE)
         },
-        error = function(e) message(paste0("Error deleting file ",f,", Continuing...")))
+        error = function(e) message(paste0("Error deleting file ",f1,", Continuing...")))
     }
 
 })

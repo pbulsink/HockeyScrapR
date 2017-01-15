@@ -21,6 +21,6 @@ Update scores information (don't rescrape old scores).
 }
 \examples{
 \dontrun{updateScores()}
-\dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+\dontrun{updatePlayers(data_dir = './data/', years_back=2}
 }
 

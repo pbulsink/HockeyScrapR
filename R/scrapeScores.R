@@ -32,15 +32,16 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
   }
 
   message("Scraping WHA games")
-  pb <- utils::txtProgressBar(min = start, max = end, initial = start)
+  if (start != end) {
+    pb <- utils::txtProgressBar(min = start, max = end, initial = start)
+  }
 
   for (i in c(start:end)) {
     url <- paste0("http://www.hockey-reference.com/leagues/WHA_", i, "_games.html")
     htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
-    if (class(htmlpage) == "try-error"){
+    if (class(htmlpage) == "try-error") {
       tables <- NULL
-    }
-    else {
+    } else {
       tables <- XML::readHTMLTable(htmlpage)
     }
     if (!is.null(tables)) {
@@ -51,8 +52,11 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
       utils::write.csv(playoff, file = paste0(data_dir, "wha", i - 1, i, "Playoffs.csv"))
     }
     Sys.sleep(sleep)
-    utils::setTxtProgressBar(pb, i)
+    if (start != end) {
+      utils::setTxtProgressBar(pb, i)
+    }
   }
+  return(TRUE)
 }
 
 #' Download and save NHL Games
@@ -101,7 +105,7 @@ getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = 
   }
 
   message("Scraping NHL games")
-  if(start != end)
+  if (start != end)
     pb <- utils::txtProgressBar(min = start, max = end, initial = start)
 
   for (i in c(start:end)) {
@@ -111,10 +115,9 @@ getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = 
     }
     url <- paste0("http://www.hockey-reference.com/leagues/NHL_", i, "_games.html")
     htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
-    if (class(htmlpage) == "try-error"){
+    if (class(htmlpage) == "try-error") {
       tables <- NULL
-    }
-    else {
+    } else {
       tables <- XML::readHTMLTable(htmlpage)
     }
 
@@ -124,8 +127,7 @@ getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = 
       playoff <- tables$games_playoffs
       utils::write.csv(regular, file = paste0(data_dir, "", i - 1, i, ".csv"))
       if (!is.null(playoff)) {
-        utils::write.csv(playoff, file = paste0(data_dir, "", i - 1, i,
-          "Playoffs.csv"))
+        utils::write.csv(playoff, file = paste0(data_dir, "", i - 1, i, "Playoffs.csv"))
       }
     }
     Sys.sleep(sleep)
@@ -199,7 +201,8 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:2
     }
     if (lastPlayoffs) {
       df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[length(nhl_year_list)] -
-        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv", sep = ""),
+        stringsAsFactors = FALSE)[2:7])
     }
   }
 
@@ -208,12 +211,12 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:2
   if (length(wha_year_list) > 0) {
     message("reading WHA data")
     for (year in 1:length(wha_year_list)) {
-      df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir,"wha", wha_year_list[year] -
+      df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
         1, wha_year_list[year], ".csv", sep = ""), stringsAsFactors = FALSE)[2:7])
     }
     if (playoffs) {
       for (year in 1:(length(wha_year_list))) {
-        df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir,"wha", wha_year_list[year] -
+        df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
           1, wha_year_list[year], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
       }
     }
@@ -265,20 +268,19 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
   hockey_data <- unique(hockey_data)
   hockey_data <- hockey_data[, !names(hockey_data) %in% c("LOG", "X")]
   hockey_data$Date <- as.Date(hockey_data$Date)
-  hockey_data <- hockey_data[order(hockey_data$Date, hockey_data$League), ]
   if ("Att." %in% names(hockey_data)) {
     hockey_data$Att. <- as.integer(hockey_data$Att.)
   }
   names(hockey_data)[names(hockey_data) == "G"] <- "VisitorGoals"
   names(hockey_data)[names(hockey_data) == "G.1"] <- "HomeGoals"
   names(hockey_data)[names(hockey_data) == "X.1"] <- "OTStatus"
-  #hockey_data$OTStatus <- factor(hockey_data$OTStatus)
-  hockey_data$League <- factor(hockey_data$League)
+  # hockey_data$OTStatus <- factor(hockey_data$OTStatus) hockey_data$League <-
+  # factor(hockey_data$League)
 
   if (identifyTies) {
     hockey_data$Tie <- FALSE
-    hockey_data[hockey_data$OTStatus %in% c("2OT", "3OT", "4OT", "5OT", "6OT",
-      "OT", "SO"), ]$Tie <- TRUE
+    try(hockey_data[hockey_data$OTStatus %in% c("2OT", "3OT", "4OT", "5OT", "6OT",
+      "OT", "SO"), ]$Tie <- TRUE, silent = TRUE)
   }
 
   # Remove games against international teams
@@ -294,47 +296,49 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
     message("special cases")
 
     hockey_data$Home <- unlist(hockey_data$Home)
-    hockey_data$Visitor<-unlist(hockey_data$Visitor)
+    hockey_data$Visitor <- unlist(hockey_data$Visitor)
 
     try(hockey_data[hockey_data$Visitor == "Winnipeg Jets" & hockey_data$Date <
       as.Date("1997-01-01", format = "%Y-%m-%d"), ]$Visitor <- "Winnipeg Jets (historical)",
       silent = TRUE)
     try(hockey_data[hockey_data$Home == "Winnipeg Jets" & hockey_data$Date <
       as.Date("1997-01-01", format = "%Y-%m-%d"), ]$Home <- "Winnipeg Jets (historical)",
-      silent=TRUE)
+      silent = TRUE)
     try(hockey_data[hockey_data$Visitor == "Ottawa Senators" & hockey_data$Date <
       as.Date("1935-01-01", format = "%Y-%m-%d"), ]$Visitor <- "Ottawa Senators (historical)",
-      silent=TRUE)
+      silent = TRUE)
     try(hockey_data[hockey_data$Home == "Ottawa Senators" & hockey_data$Date <
       as.Date("1935-01-01", format = "%Y-%m-%d"), ]$Home <- "Ottawa Senators (historical)",
-      silent=TRUE)
+      silent = TRUE)
 
     for (t in teamReplace) {
-      try(hockey_data[hockey_data$Visitor == t[[1]], ]$Visitor <- t[[2]], silent=TRUE)
-      try(hockey_data[hockey_data$Home == t[[1]], ]$Home <- t[[2]], silent=TRUE)
+      try(hockey_data[hockey_data$Visitor == t[[1]], ]$Visitor <- t[[2]], silent = TRUE)
+      try(hockey_data[hockey_data$Home == t[[1]], ]$Home <- t[[2]], silent = TRUE)
     }
 
     try(hockey_data[hockey_data$Date > as.Date("1976-09-01", format = "%Y-%m-%d") &
       hockey_data$Visitor == "Minnesota Fighting Saints", ]$Visitor <- "Cleveland Crusaders",
-      silent=TRUE)
+      silent = TRUE)
     try(hockey_data[hockey_data$Date > as.Date("1976-09-01", format = "%Y-%m-%d") &
       hockey_data$Home == "Minnesota Fighting Saints", ]$Home <- "Cleveland Crusaders",
-      silent=TRUE)
+      silent = TRUE)
 
     hockey_data$Home <- factor(hockey_data$Home)
-    hockey_data$Visitor <-factor(hockey_data$Visitor, levels=levels(hockey_data$Home))
+    hockey_data$Visitor <- factor(hockey_data$Visitor, levels = levels(hockey_data$Home))
   }
 
   if (listWinnersLosers) {
     hockey_data$Winner <- factor(apply(hockey_data, 1, function(x) ifelse(x[3] >
-      x[5], x[2], x[4])), levels=levels(hockey_data$Home))
+      x[5], x[2], x[4])), levels = levels(hockey_data$Home))
     hockey_data$Loser <- factor(apply(hockey_data, 1, function(x) ifelse(x[3] <=
-      x[5], x[2], x[4])), levels=levels(hockey_data$Home))
+      x[5], x[2], x[4])), levels = levels(hockey_data$Home))
   }
 
   if (eloResults) {
     hockey_data$Result <- apply(hockey_data, 1, function(x) tieSort(x))
   }
+
+  hockey_data <- hockey_data[order(hockey_data$Date, hockey_data$League), ]
 
   return(hockey_data)
 }
@@ -375,13 +379,19 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #'
 #' @examples
 #' \dontrun{updateScores()}
-#' \dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+#' \dontrun{updatePlayers(data_dir = './data/', years_back=2}
 updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
-    last_score_date<-max(score_data$Date)
-    getAndSaveNHLGames(data_dir = data_dir, start = as.numeric(format(last_score_date, "%Y")), ...)
+  if (!dir.exists(data_dir)) {
+    message("Data directory '", data_dir, "' does not exist. Scraping all scores.")
+    hockey_data <- scrapeScores(data_dir = data_dir, ...)
+  } else {
+    last_score_date <- max(score_data$Date)
+    getAndSaveNHLGames(data_dir = data_dir, start = as.numeric(format(last_score_date,
+      "%Y")), ...)
     hockey_data <- readHockeyData(data_dir = data_dir, ...)
     saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
-    return(hockey_data)
+  }
+  return(hockey_data)
 }
 
 
