@@ -10,4 +10,12 @@ This is a package to simplify getting data from assorted websites including Hock
 
 Please respect these websites with your scraping rate, and credit them for the data you use. 
 
+Install these tools in R using `devtools`:
+
+```R
+install.packages('devtools')
+
+devtools::install_github(pbulsink/HockeyScrapR)
+```
+
 Additional tools and functions will be provided as they're prepared. Please feel freel to chip in!
