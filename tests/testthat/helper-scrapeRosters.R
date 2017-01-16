@@ -1,4 +1,4 @@
-#helper for scrape roster testing
+# helper for scrape roster testing
 try_delete <- function(f) {
   if (file.exists(f)) {
     tryCatch({
