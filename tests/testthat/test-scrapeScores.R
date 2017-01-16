@@ -67,3 +67,15 @@ test_that("Reading Hockey Data Works", {
 
   try_delete(f1)
 })
+
+test_that("Scores Update", {
+  up_to_date_scores<-updateScores(out_of_date_scores, "./", sleep=10)
+  expect_true(nrow(up_to_date_scores) > nrow(out_of_date_scores))
+  f1<-paste0("./scores-", Sys.Date(), ".RDS")
+  f2<-paste0("./20162017.csv")
+  expect_true(file.exists(f1))
+  expect_true(file.exists(f2))
+  try_delete(f1)
+  try_delete(f2)
+
+})
