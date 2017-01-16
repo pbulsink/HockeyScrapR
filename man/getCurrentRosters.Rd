@@ -4,10 +4,12 @@
 \alias{getCurrentRosters}
 \title{Get Current estimated rosters}
 \usage{
-getCurrentRosters(sleep = 30)
+getCurrentRosters(sleep = 30, teamUrlList = teamURLList)
 }
 \arguments{
 \item{sleep}{The amount of time to sleep between requests}
+
+\item{teamUrlList}{A list of team roster page urls on dailyfaceoff.com. Defaults to correct team URLs.}
 }
 \value{
 a long data frame with three columns:

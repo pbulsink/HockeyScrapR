@@ -5,7 +5,8 @@
 \title{Clean the CSV imported hockey data}
 \usage{
 cleanHockeyData(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
-  listWinnersLosers = TRUE, removeInternational = TRUE, eloResults = TRUE)
+  listWinnersLosers = TRUE, removeInternational = TRUE, eloResults = TRUE,
+  ...)
 }
 \arguments{
 \item{hockey_data}{the combined CSV data}
@@ -19,6 +20,8 @@ cleanHockeyData(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
 \item{removeInternational}{Whether to add games between NHL teams and international teams (Boolean, default = \code{TRUE})}
 
 \item{eloResults}{Whether to add a column for results in a [0..1] set (Boolean, default = \code{TRUE})}
+
+\item{...}{Additional parameters to pass}
 }
 \value{
 Returns a cleaned data frame of hockey scores, with options as selected

@@ -5,27 +5,30 @@
 #' @param referer A referer source
 #'
 #' @return raw url contents output from getURL as the HTTP reply from the server
-#' 
+#'
 #' @keywords internal
 getURLInternal <- function(url, referer = "http://www.google.com") {
-    agents <- c("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14",
-                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36")
-    htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
-                                                                           header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8,
-                                                                                                                                           1)])))
-    
-    if (class(htmlpage) == "try-error") {
-        message(paste0("HTML Try Error on: ", url))
-        htmlpage <- RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
-                                                                           header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8,
-                                                                                                                                           1)]))
-    }
-    return(htmlpage)
+  agents <- c("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14", 
+    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36")
+  htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer, 
+    header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8, 1)])), silent = TRUE)
+  
+  if (class(htmlpage) == "try-error") {
+    message(paste0("HTML Try Error on: ", url))
+    htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer, 
+      header = TRUE, followLocation = TRUE, useragent = agents[sample(1:8, 1)])), silent = TRUE)
+  }
+  return(htmlpage)
 }
 
+getCurrentSeason <- function() {
+  year <- as.numeric(format(Sys.Date(), "%Y"))
+  if (as.numeric(format(Sys.Date(), "%m")) >= 8) {
+    year <- year + 1
+  }
+  return(year)
+}

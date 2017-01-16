@@ -29,6 +29,6 @@ Update player information (don't rescrape old players).
 }
 \examples{
 \dontrun{updatePlayers()}
-\dontrun{updatePlayers(data_dir = "./data/", years_back=2}
+\dontrun{updatePlayers(data_dir = './data/', years_back=2}
 }
 

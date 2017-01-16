@@ -5,10 +5,12 @@
 \title{Get a list of Players
 Download the full list of active and past players from Hockey-Reference.com}
 \usage{
-getPlayerList(sleep = 30)
+getPlayerList(sleep = 30, letters = letters)
 }
 \arguments{
 \item{sleep}{The sleep time between scrape requests}
+
+\item{letters}{The letters to scrape player names from. Default: \code{letters}}
 }
 \value{
 a data.frame containing:
