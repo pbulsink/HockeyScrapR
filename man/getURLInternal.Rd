@@ -13,7 +13,7 @@ getURLInternal(url, referer = "http://www.google.com")
 \item{referer}{A referer source}
 }
 \value{
-raw url contents output from getURL as the HTTP reply from the server
+raw url contents output from getURL as the HTTP reply from the server, or try-error if an error has occurred and cannot be recovered from.
 }
 \description{
 Extra wrapped getURL

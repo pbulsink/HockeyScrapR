@@ -182,7 +182,7 @@ test_that("Scraper works", {
 })
 
 test_that("Schedule returns full cleaned season", {
-  fromdate <- paste0(getCurrentSeason(), "-09-01")
+  fromdate <- paste0(getCurrentSeason()-1, "-09-01")
   scraped_schedule <- getSchedule(fromdate, data_dir = "./", include_playoffs = FALSE)
 
   f1 <- "./schedule.RDS"
@@ -190,9 +190,9 @@ test_that("Schedule returns full cleaned season", {
   try_delete(f1)
 
   expect_equal(nrow(scraped_schedule), 1230)
-  expect_equal(unique(sched$G), "")
-  expect_equal(unique(sched$G.1), "")
-  expect_equal(unique(sched$X), "")
+  expect_equal(unique(scraped_schedule$G), "")
+  expect_equal(unique(scraped_schedule$G.1), "")
+  expect_equal(unique(scraped_schedule$X), "")
 
   fromdate <- paste0(getCurrentSeason() + 2, "-09-01")
   expect_false(getSchedule(from_date = fromdate))

@@ -430,7 +430,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   schedule <- tables$games
   playoff <- tables$games_playoffs
 
-  if (length(playoff) > 0 && include_playoffs == TRUE)
+  if (!is.null(playoff) && include_playoffs == TRUE)
     schedule <- rbind(schedule, playoff)
 
   colnames(schedule) <- c("Date", "Visitor", "G", "Home", "G.1", "X", "Att.", "LOG",
