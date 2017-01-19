@@ -4,7 +4,6 @@ source("helper-scrapeScores.R")
 test_that("Testing scraping NHL scores", {
   expect_false(getAndSaveNHLGames(start = 2005, end = 2005))
   expect_message(getAndSaveNHLGames(start = 2005, end = 2005), "Can't collect 2004-2005. No season due to lockout. Not collecting any data.")
-
   expect_true(getAndSaveNHLGames(start = 2013, end = 2013, data_dir = "./", sleep = 10))
   f1 <- "./20122013.csv"
   f2 <- "./20122013Playoffs.csv"
@@ -70,7 +69,6 @@ test_that("Testing scraping NHL scores", {
 })
 
 test_that("Testing scraping WHA scores", {
-
   expect_true(getAndSaveWHAGames(start = 1975, end = 1975, data_dir = "./", sleep = 10))
   f1 <- "./wha19741975.csv"
   f2 <- "./wha19741975Playoffs.csv"
@@ -140,7 +138,6 @@ test_that("Reading Hockey Data Works", {
     playoffs = TRUE, lastPlayoffs = TRUE)
 
   expect_equivalent(scores_data, cleaned_scores)
-
   try_delete(f1)
   try_delete(f2)
   try_delete(f3)
