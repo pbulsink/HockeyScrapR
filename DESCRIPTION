@@ -1,7 +1,7 @@
 Package: HockeyScrapR
 Type: Package
 Title: Tools to scrape hockey data
-Version: 0.1
+Version: 0.1.2
 Date: 2017-01-06
 Author: Philip Bulsink
 Maintainer: Philip Bulsink <bulsinkp@gmail.com>

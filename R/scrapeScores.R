@@ -186,7 +186,6 @@ tieSort <- function(game) {
 #' @export
 readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:2017),
   wha_year_list = c(1973:1979), playoffs = TRUE, lastPlayoffs = FALSE, ...) {
-
   df_nhl <- data.frame(Date = NULL, Visitor = NULL, G = NULL, Home = NULL, G.1 = NULL,
     X.1 = NULL, stringsAsFactors = FALSE)
   df_wha <- df_nhl
@@ -300,7 +299,6 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
 
   if (cleanTeams) {
     # Special Casing out the various teams with repeat existances
-
     hockey_data$Home <- unlist(hockey_data$Home)
     hockey_data$Visitor <- unlist(hockey_data$Visitor)
 
@@ -345,7 +343,6 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
   }
 
   hockey_data <- hockey_data[order(hockey_data$Date, hockey_data$League), ]
-
   return(hockey_data)
 }
 
@@ -430,7 +427,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   schedule <- tables$games
   playoff <- tables$games_playoffs
 
-  if (length(playoff) > 0 && include_playoffs == TRUE)
+  if (!is.null(playoff) && include_playoffs == TRUE)
     schedule <- rbind(schedule, playoff)
 
   colnames(schedule) <- c("Date", "Visitor", "G", "Home", "G.1", "X", "Att.", "LOG",

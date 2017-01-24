@@ -4,7 +4,6 @@ source("helper-scrapeScores.R")
 test_that("Testing scraping NHL scores", {
   expect_false(getAndSaveNHLGames(start = 2005, end = 2005))
   expect_message(getAndSaveNHLGames(start = 2005, end = 2005), "Can't collect 2004-2005. No season due to lockout. Not collecting any data.")
-
   expect_true(getAndSaveNHLGames(start = 2013, end = 2013, data_dir = "./", sleep = 10))
   f1 <- "./20122013.csv"
   f2 <- "./20122013Playoffs.csv"
@@ -70,7 +69,6 @@ test_that("Testing scraping NHL scores", {
 })
 
 test_that("Testing scraping WHA scores", {
-
   expect_true(getAndSaveWHAGames(start = 1975, end = 1975, data_dir = "./", sleep = 10))
   f1 <- "./wha19741975.csv"
   f2 <- "./wha19741975Playoffs.csv"
@@ -182,7 +180,9 @@ test_that("Scraper works", {
 })
 
 test_that("Schedule returns full cleaned season", {
-  fromdate <- paste0(getCurrentSeason(), "-09-01")
+
+  fromdate <- paste0(getCurrentSeason()-1, "-09-01")
+
   scraped_schedule <- getSchedule(fromdate, data_dir = "./", include_playoffs = FALSE)
 
   f1 <- "./schedule.RDS"
@@ -190,9 +190,9 @@ test_that("Schedule returns full cleaned season", {
   try_delete(f1)
 
   expect_equal(nrow(scraped_schedule), 1230)
-  expect_equal(unique(sched$G), "")
-  expect_equal(unique(sched$G.1), "")
-  expect_equal(unique(sched$X), "")
+  expect_equal(unique(scraped_schedule$G), "")
+  expect_equal(unique(scraped_schedule$G.1), "")
+  expect_equal(unique(scraped_schedule$X), "")
 
   fromdate <- paste0(getCurrentSeason() + 2, "-09-01")
   expect_false(getSchedule(from_date = fromdate))
