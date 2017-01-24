@@ -18,4 +18,7 @@ install.packages('devtools')
 devtools::install_github(pbulsink/HockeyScrapR)
 ```
 
-Additional tools and functions will be provided as they're prepared. Please feel freel to chip in!
+Additional tools and functions will be provided as they're prepared. Please feel free to chip in! 
+
+Current version: 0.1.2
+
