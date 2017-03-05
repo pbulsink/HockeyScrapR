@@ -2,7 +2,7 @@
 #' updatePlayerInfo (given old player) gets new player
 
 context("Testing scraping player data")
-source("./tests/testthat/helper-scrapePlayersHR.R")
+source("helper-scrapePlayersHR.R")
 
 test_that("getPlayerList returns ok", {
   player_list <- getPlayerList(sleep = 0, letters = "a")
