@@ -138,6 +138,7 @@ test_that("Reading Hockey Data Works", {
     playoffs = TRUE, lastPlayoffs = TRUE)
 
   expect_equivalent(scores_data, cleaned_scores)
+
   try_delete(f1)
   try_delete(f2)
   try_delete(f3)
@@ -179,7 +180,9 @@ test_that("Scraper works", {
 })
 
 test_that("Schedule returns full cleaned season", {
+
   fromdate <- paste0(getCurrentSeason()-1, "-09-01")
+
   scraped_schedule <- getSchedule(fromdate, data_dir = "./", include_playoffs = FALSE)
 
   f1 <- "./schedule.RDS"

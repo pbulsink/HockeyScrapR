@@ -29,7 +29,6 @@ getURLInternal <- function(url, referer = "http://www.google.com") {
   return(htmlpage)
 }
 
-
 #' Get the current Season 'year code'. From 01 August 2016 to 31 July 2017 will return 2017
 #'
 #' @return Numeric, 4 digit year

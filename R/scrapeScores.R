@@ -10,7 +10,6 @@
 #'
 #' @export
 #' @keywords internal
-
 getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = "./data/scores/",
   ...) {
   if (start > end) {
@@ -136,7 +135,6 @@ getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = 
       }
     }
     Sys.sleep(sleep)
-
     if (start != end)
       utils::setTxtProgressBar(pb, i)
   }
@@ -186,7 +184,6 @@ tieSort <- function(game) {
 #' @return returns a un-cleaned data frame from NHL and WHA score csv files
 #' @keywords internal
 #' @export
-
 readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:2017),
   wha_year_list = c(1973:1979), playoffs = TRUE, lastPlayoffs = FALSE, ...) {
   df_nhl <- data.frame(Date = NULL, Visitor = NULL, G = NULL, Home = NULL, G.1 = NULL,
@@ -272,6 +269,7 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
     list("Pittsburgh Pirates", "Philadelphia Quakers"), list("Toronto Arenas",
       "Toronto Maple Leafs"), list("Toronto St. Patricks", "Toronto Maple Leafs"),
     list("Ottawa Senators (historical)", "St. Louis Eagles"))
+
   # ReType frame
   hockey_data <- unique(hockey_data)
   hockey_data <- hockey_data[, !names(hockey_data) %in% c("LOG", "X")]
@@ -316,11 +314,11 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
     try(hockey_data[hockey_data$Home == "Ottawa Senators" & hockey_data$Date <
       as.Date("1935-01-01", format = "%Y-%m-%d"), ]$Home <- "Ottawa Senators (historical)",
       silent = TRUE)
+
     for (t in teamReplace) {
       try(hockey_data[hockey_data$Visitor == t[[1]], ]$Visitor <- t[[2]], silent = TRUE)
       try(hockey_data[hockey_data$Home == t[[1]], ]$Home <- t[[2]], silent = TRUE)
     }
-
 
     try(hockey_data[hockey_data$Date > as.Date("1976-09-01", format = "%Y-%m-%d") &
       hockey_data$Visitor == "Minnesota Fighting Saints", ]$Visitor <- "Cleveland Crusaders",
