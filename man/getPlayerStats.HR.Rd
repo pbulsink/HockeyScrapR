@@ -3,12 +3,12 @@
 \name{getPlayerStats.HR}
 \alias{getPlayerStats.HR}
 \title{Get stats for a list of players
-A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList}})}
+A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.HR}})}
 \usage{
 getPlayerStats.HR(player_list, sleep = 30)
 }
 \arguments{
-\item{player_list}{A player list (data.frame) from \code{\link{getPlayerList}}}
+\item{player_list}{A player list (data.frame) from \code{\link{getPlayerList.HR}}}
 
 \item{sleep}{Time to sleep between player scrapings}
 }
@@ -20,6 +20,6 @@ a list of three data.frames, containing
 }
 \description{
 Get stats for a list of players
-A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList}})
+A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.HR}})
 }
 

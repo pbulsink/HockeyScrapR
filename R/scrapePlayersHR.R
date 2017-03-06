@@ -12,7 +12,7 @@
 #' \item{Name}{Player Name}
 #' \item{Active}{Whether the player is currently active}
 #' @export
-getPlayerList <- function(sleep = 30, letters = letters) {
+getPlayerList.HR <- function(sleep = 30, letters = letters) {
   pattern <- "<p class=\"([a-z\\_]+)\">(?:<strong>)*<a href=\"(\\/players\\/[a-z]+\\/[a-zA-Z0-9]+\\.html)\">([a-zA-Z ]+)<\\/a>(?:<\\/strong>)*\\s*\\(([0-9-]+)*"
   player_list <- data.frame(Complete = character(), BlnNHL = character(), URL = character(), Name = character(),
     Active = character())
@@ -214,9 +214,9 @@ flattenPlayerTables.HR <- function(tables) {
 }
 
 #' Get stats for a list of players
-#' A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList}})
+#' A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.HR}})
 #'
-#' @param player_list A player list (data.frame) from \code{\link{getPlayerList}}
+#' @param player_list A player list (data.frame) from \code{\link{getPlayerList.HR}}
 #' @param sleep Time to sleep between player scrapings
 #'
 #' @return a list of three data.frames, containing
@@ -282,7 +282,7 @@ getPlayerStats.HR <- function(player_list, sleep = 30) {
 #' A function to scrape and save player tables by last name, breaking up the scraping
 #' into each chunk to prevent progress loss by scraping error (HTML error)
 #'
-#' @param player_list a player list (data.frame) of the type created by \code{\link{getPlayerList}}
+#' @param player_list a player list (data.frame) of the type created by \code{\link{getPlayerList.HR}}
 #' @param letters_to_scrape the letters of last names to scrape (default all letters)
 #' @param long_sleep The length of time to sleep between letters
 #' @param combine Whether to combine all player data.frames (a-z) after downloading
@@ -299,7 +299,7 @@ scrapeByAlphabet.HR <- function(player_list, letters_to_scrape = letters, long_s
     ps <- getPlayerStats.HR(player_list[startsWith(player_list$URL, paste0("/players/", letter)),
       ], ...)
     if (!is.null(ps)) {
-      saveRDS(ps, paste0(directory, "players_", letter, ".RDS"))
+      saveRDS(ps, paste0(directory, "HR_players_", letter, ".RDS"))
     }
     Sys.sleep(long_sleep)
   }
@@ -328,10 +328,10 @@ combinePlayerDataFrames.HR <- function(directory = "./data/players/", return_dat
   players <- list()
   goalies <- list()
   for (letter in letters) {
-    f <- paste0(directory, "players_", letter, ".RDS")
+    f <- paste0(directory, "HR_players_", letter, ".RDS")
     if (file.exists(f)) {
       tryCatch({
-        ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
+        ldf[[letter]] <- readRDS(paste0(directory, "HR_players_", letter, ".RDS"))
       }, error = function(e) message(paste0("Error opening file players_", letter, ".RDS, Skipping...")))
       if (!is.null(ldf[[letter]])) {
         meta[[letter]] <- ldf[[letter]][[3]]
@@ -346,9 +346,9 @@ combinePlayerDataFrames.HR <- function(directory = "./data/players/", return_dat
   all_goalies <- plyr::rbind.fill(goalies)
   all_meta <- plyr::rbind.fill(meta)
   all_df <- list(PlayerStats = all_players, GoalieStats = all_goalies, PlayerMeta = all_meta)
-  saveRDS(all_df, paste0(directory, "allPlayers.RDS"))
+  saveRDS(all_df, paste0(directory, "HR_allPlayers-", Sys.Date(), ".RDS"))
   for (letter in letters) {
-    f <- paste0(directory, "players_", letter, ".RDS")
+    f <- paste0(directory, "HR_players_", letter, ".RDS")
     if (file.exists(f)) {
       tryCatch({
         file.remove(f)
@@ -511,10 +511,10 @@ processPlayerData.HR <- function(player_data, drop_awards = TRUE, ...) {
 scrapePlayers.HR <- function(data_dir = "./data/players/", ...) {
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
-  player_list <- getPlayerList(...)
+  player_list <- getPlayerList.HR(...)
   player_data <- scrapeByAlphabet.HR(player_list = player_list, directory = data_dir, ...)
   player_data <- processPlayerData.HR(player_data, ...)
-  saveRDS(player_data, paste0(data_dir, "allPlayers-", Sys.Date(), ".RDS"))
+  saveRDS(player_data, paste0(data_dir, "HR_allPlayers-", Sys.Date(), ".RDS"))
   return(player_data)
 }
 
@@ -539,7 +539,7 @@ updatePlayers.HR <- function(player_data, data_dir = "./data/players/", years_ba
   ...) {
 
   if (is.null(player_list)) {
-    player_list <- getPlayerList(...)
+    player_list <- getPlayerList.HR(...)
   }
   active <- player_list$Active
   active[active == ""] <- "0-0"
@@ -567,6 +567,6 @@ updatePlayers.HR <- function(player_data, data_dir = "./data/players/", years_ba
   p <- list(PlayerStats = p_player, GoalieStats = p_goalie, PlayerMeta = p_meta)
 
   new_player_data <- processPlayerData.HR(p, ...)
-  saveRDS(new_player_data, paste0(data_dir, "allPlayers-", Sys.Date(), ".RDS"))
+  saveRDS(new_player_data, paste0(data_dir, "HR_allPlayers-", Sys.Date(), ".RDS"))
   return(new_player_data)
 }
