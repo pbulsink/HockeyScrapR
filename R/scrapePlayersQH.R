@@ -81,9 +81,9 @@ flattenPlayerTables.QH <- function(tables) {
 }
 
 #' Get stats for a list of players
-#' A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList}})
+#' A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.QH}})
 #'
-#' @param player_list A player list (data.frame) from \code{\link{getPlayerList}}
+#' @param player_list A player list (data.frame) from \code{\link{getPlayerList.QH}}
 #' @param sleep Time to sleep between player scrapings
 #'
 #' @return a list of three data.frames, containing
@@ -165,7 +165,7 @@ getPlayerList.QH <- function(prebuilt=FALSE) {
 #' A function to scrape and save player tables by last name, breaking up the scraping
 #' into each chunk to prevent progress loss by scraping error (HTML error)
 #'
-#' @param player_list a player list (data.frame) of the type created by \code{\link{getPlayerList}}
+#' @param player_list a player list (data.frame) of the type created by \code{\link{getPlayerList.QH}}
 #' @param group_by The group size to scrape. Default 1000
 #' @param long_sleep The length of time to sleep between groups
 #' @param combine Whether to combine all player data.frames (groups) after downloading
@@ -179,7 +179,7 @@ scrapeByNumber <- function(player_list, group_by = 1000, long_sleep = 120, combi
   directory = "./data/players/", ...) {
   if (!dir.exists(directory))
     dir.create(directory, recursive = TRUE)
-  for (num in c(1:(nrow(player_list)/group_by))) {
+  for (num in c(1:(player_list[nrow(player_list), 'PlayerNum']/group_by))) {
     start<-((num-1)*group_by)+1
     end<-num*group_by
     if (end > nrow(player_list))
@@ -187,7 +187,7 @@ scrapeByNumber <- function(player_list, group_by = 1000, long_sleep = 120, combi
     message(paste0("Getting players from ", start, " to ", end,"."))
     ps <- getPlayerStats.QH(player_list[c(start:end),], ...)
     player_list[player_list$PlayerNum %in% ps$pdrop,]<-FALSE
-    player_list<-merge(player_list[,c("PlayerNum", "Exists")], ps$PlayerMeta[,c("PlayerNum", "Name")], by="PlayerNum")
+    player_list<-merge(player_list[,c("PlayerNum", "Exists")], ps$PlayerMeta[,c("PlayerNum", "Name")], by="PlayerNum", all=TRUE)
     ps$pdrop<-NULL
     if (!is.null(ps)) {
       saveRDS(ps, paste0(directory, "QH_players_", start, "-", end, ".RDS"))
@@ -260,7 +260,6 @@ combinePlayerDataFrames.QH <- function(directory = "./data/players/", return_dat
 #' This function will process player data, returning clean data frames as a list
 #'
 #' @param player_data The player_data to clean up
-#' @param drop_awards Whether to drop awards column.
 #' @param ... Additional parameters to pass
 #'
 #' @return a list of three cleaned data.frames, containing
@@ -335,6 +334,7 @@ processPlayerData.QH <- function(player_data, ...) {
 #' Also saves results to a dated .RDS file.
 #'
 #' @param data_dir Directory to store data
+#' @param player_list A player list of the type type created by \code{\link{getPlayerList.QH}}
 #' @param ... Additional parameters to pass
 #'
 #' @return a list of three cleaned data.frames, containing
@@ -346,10 +346,10 @@ processPlayerData.QH <- function(player_data, ...) {
 #' @examples
 #' \dontrun{scrapePlayers.QH()}
 #' \dontrun{scrapePlayers.QH(sleep=15, long_sleep=180, group_by=500)}
-scrapePlayers.QH <- function(data_dir = "./data/players/", player_list=getPlayerList(), ...) {
+scrapePlayers.QH <- function(data_dir = "./data/players/", player_list=getPlayerList.QH(), ...) {
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
-  player_data <- scrapeByAlphabet.QH(player_list = player_list, directory = data_dir, ...)
+  player_data <- scrapeByNumber(player_list = player_list, directory = data_dir, ...)
   player_data <- processPlayerData.QH(player_data, ...)
   saveRDS(player_data, paste0(data_dir, "QH_allPlayers-", Sys.Date(), ".RDS"))
   return(player_data)
@@ -376,7 +376,7 @@ updatePlayers.QH <- function(player_data, data_dir = "./data/players/", years_ba
   ...) {
 
   if (is.null(player_list)) {
-    player_list <- getPlayerList(...)
+    player_list <- getPlayerList.QH(...)
   }
   active <- player_list$Active
   active[active == ""] <- "0-0"
@@ -394,7 +394,7 @@ updatePlayers.QH <- function(player_data, data_dir = "./data/players/", years_ba
   new_goalie_data <- new_goalie_data[!new_goalie_data$Name %in% unique(update_players$Name), ]
   new_meta <- new_player_data[!new_meta$Name %in% unique(update_players$Name), ]
 
-  p <- scrapeByAlphabet.QH(player_list = update_players, directory = data_dir, ...)
+  p <- scrapeByNumber(player_list = update_players, directory = data_dir, ...)
   p_player <- p[[1]]
   p_goalie <- p[[2]]
   p_meta <- p[[3]]

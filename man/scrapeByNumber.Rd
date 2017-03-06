@@ -10,7 +10,7 @@ scrapeByNumber(player_list, group_by = 1000, long_sleep = 120,
   combine = TRUE, directory = "./data/players/", ...)
 }
 \arguments{
-\item{player_list}{a player list (data.frame) of the type created by \code{\link{getPlayerList}}}
+\item{player_list}{a player list (data.frame) of the type created by \code{\link{getPlayerList.QH}}}
 
 \item{group_by}{The group size to scrape. Default 1000}
 

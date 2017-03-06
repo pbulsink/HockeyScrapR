@@ -5,7 +5,7 @@
 \title{Scrape and clean all player data}
 \usage{
 scrapePlayers.QH(data_dir = "./data/players/",
-  player_list = getPlayerList(), ...)
+  player_list = getPlayerList.QH(), ...)
 }
 \arguments{
 \item{data_dir}{Directory to store data}

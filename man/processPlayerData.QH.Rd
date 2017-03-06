@@ -11,8 +11,6 @@ processPlayerData.QH(player_data, ...)
 \item{player_data}{The player_data to clean up}
 
 \item{...}{Additional parameters to pass}
-
-\item{drop_awards}{Whether to drop awards column.}
 }
 \value{
 a list of three cleaned data.frames, containing
