@@ -6,6 +6,7 @@
 #'
 #' @return raw url contents output from getURL as the HTTP reply from the server, or try-error if an error has occurred and cannot be recovered from.
 #'
+#' @export
 #' @keywords internal
 getURLInternal <- function(url, referer = "http://www.google.com") {
   agents <- c("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36",
