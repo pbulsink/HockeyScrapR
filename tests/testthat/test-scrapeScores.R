@@ -121,6 +121,7 @@ test_that("Testing scraping WHA scores", {
 })
 
 test_that("Reading Hockey Data Works", {
+<<<<<<< HEAD
     f1 <- "./20122013.csv"
     f2 <- "./20122013Playoffs.csv"
     f3 <- "./wha19721973.csv"
@@ -143,6 +144,30 @@ test_that("Reading Hockey Data Works", {
     try_delete(f2)
     try_delete(f3)
     try_delete(f4)
+=======
+  f1 <- "./20122013.csv"
+  f2 <- "./20122013Playoffs.csv"
+  f3 <- "./wha19721973.csv"
+  f4 <- "./wha19721973Playoffs.csv"
+  write.csv(sample_csv1, f1)
+  write.csv(sample_csv2, f2)
+  write.csv(sample_csv3, f3)
+  write.csv(sample_csv4, f4)
+  expect_true(file.exists(f1))
+  expect_true(file.exists(f2))
+  expect_true(file.exists(f3))
+  expect_true(file.exists(f4))
+
+  scores_data <- readHockeyData(data_dir = "./", nhl_year_list = c(2013), wha_year_list = c(1973),
+    playoffs = TRUE, lastPlayoffs = TRUE)
+
+  expect_equivalent(scores_data, cleaned_scores)
+
+  try_delete(f1)
+  try_delete(f2)
+  try_delete(f3)
+  try_delete(f4)
+>>>>>>> master
 })
 
 test_that("Scores Update", {
@@ -180,6 +205,7 @@ test_that("Scraper works", {
 })
 
 test_that("Schedule returns full cleaned season", {
+<<<<<<< HEAD
     
     fromdate <- paste0(getCurrentSeason() - 1, "-09-01")
     
@@ -196,4 +222,22 @@ test_that("Schedule returns full cleaned season", {
     
     fromdate <- paste0(getCurrentSeason() + 2, "-09-01")
     expect_false(getSchedule(from_date = fromdate))
+=======
+
+  fromdate <- paste0(getCurrentSeason()-1, "-09-01")
+
+  scraped_schedule <- getSchedule(fromdate, data_dir = "./", include_playoffs = FALSE)
+
+  f1 <- "./schedule.RDS"
+  expect_true(file.exists(f1))
+  try_delete(f1)
+
+  expect_equal(nrow(scraped_schedule), 1230)
+  expect_equal(unique(scraped_schedule$G), "")
+  expect_equal(unique(scraped_schedule$G.1), "")
+  expect_equal(unique(scraped_schedule$X), "")
+
+  fromdate <- paste0(getCurrentSeason() + 2, "-09-01")
+  expect_false(getSchedule(from_date = fromdate))
+>>>>>>> master
 })
