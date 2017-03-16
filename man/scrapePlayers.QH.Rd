@@ -4,11 +4,12 @@
 \alias{scrapePlayers.QH}
 \title{Scrape and clean all player data}
 \usage{
-scrapePlayers.QH(data_dir = "./data/players/",
-  player_list = getPlayerList.QH(), ...)
+scrapePlayers.QH(player_list, directory = "./data/players/", ...)
 }
 \arguments{
-\item{data_dir}{Directory to store data}
+\item{player_list}{A player list of the type type created by \code{\link{getPlayerList.QH}}}
+
+\item{directory}{Directory to store data}
 
 \item{...}{Additional parameters to pass}
 }

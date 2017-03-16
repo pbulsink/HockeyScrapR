@@ -21,7 +21,7 @@ scrapePlInfo.QH <- function(url) {
   # Read in Tables
   tables <- XML::readHTMLTable(htmlpage)
 
-  m1 <- "<h1 itemprop=\"name\" id=\"pp_title\">([A-Za-z\\s\\'\\-]+)<\\/h1>"
+  m1 <- "<h1 itemprop=\"name\" id=\"pp_title\">([\\p{L}\\s\\'\\-]+)<\\/h1>"
   meta_name <- stringr::str_match(htmlpage, m1)[, 2]
   meta_name <- gsub("\\'", "", meta_name)
   names(meta_name) <- "Name"
@@ -30,7 +30,7 @@ scrapePlInfo.QH <- function(url) {
   meta_birthdate <- stringr::str_match(htmlpage, m2)[, 2]
   names(meta_birthdate) <- "Birthdate"
 
-  m3 <- "<span itemprop=\"birthPlace\">([a-zA-Z\\s\\.]+),?([a-zA-Z\\s\\.]+)?,([a-zA-Z\\s\\.]+)<\\/span>"
+  m3 <- "<span itemprop=\"birthPlace\">([\\p{L}\\s\\.]+),?([\\p{L}\\s\\.]+)?,([\\p{L}\\s\\.]+)<\\/span>"
   meta_birthplace <- stringr::str_trim(stringr::str_match(htmlpage, m3)[,c(2:4)])
   names(meta_birthplace) <- c("Birthplace", "Province", "Country")
 
@@ -117,12 +117,15 @@ getPlayerStats.QH <- function(player_list, sleep = 30) {
       pname<-metas['Name']
       metas['PlayerNum']<-plist[player, "PlayerNum"]
       tables <- flattenPlayerTables.QH(scrape$Tables)
-      tables$Name <- pname
+      if(nrow(tables)>0){
+        tables$Name <- pname
+        tables$PlayerNum <- plist[player, "PlayerNum"]
 
-      if ("Goalie" %in% scrape$Metas["Position"]) {
-        goalie_stats_tables <- plyr::rbind.fill(goalie_stats_tables, tables)
-      } else {
-        player_stats_tables <- plyr::rbind.fill(player_stats_tables, tables)
+        if ("Goalie" %in% scrape$Metas["Position"]) {
+          goalie_stats_tables <- plyr::rbind.fill(goalie_stats_tables, tables)
+        } else {
+          player_stats_tables <- plyr::rbind.fill(player_stats_tables, tables)
+        }
       }
       player_meta_tables <- plyr::rbind.fill(player_meta_tables, data.frame(t(metas)))
     }
@@ -131,7 +134,7 @@ getPlayerStats.QH <- function(player_list, sleep = 30) {
   }
   if (length(pdrop)>0){
     m1<-paste0("Error getting ",length(pdrop), ' player record(s):\n')
-    m2<-paste(pdrop, collapse=', ')
+    m2<-paste(pdrop[order(pdrop)], collapse=', ')
     m<-paste0(m1, m2)
     message(m)
   }
@@ -153,7 +156,7 @@ getPlayerStats.QH <- function(player_list, sleep = 30) {
 #' @export
 getPlayerList.QH <- function(prebuilt=FALSE) {
   if (prebuilt){
-    player_list<-get(load(file = "./R/sysdata.rda"))
+    player_list<-player_list_internal
   }
   else{
     player_list<-data.frame("PlayerNum"=c(1:50000), "Exists"=rep(TRUE, 50000), "Name"=rep("", 50000))
@@ -168,6 +171,8 @@ getPlayerList.QH <- function(prebuilt=FALSE) {
 #' @param player_list a player list (data.frame) of the type created by \code{\link{getPlayerList.QH}}
 #' @param group_by The group size to scrape. Default 1000
 #' @param long_sleep The length of time to sleep between groups
+#' @param start_at The playernumber to start at. Default = 1
+#' @param save_player_list Whether to save the player list
 #' @param combine Whether to combine all player data.frames (groups) after downloading
 #' @param directory Where to store data files
 #' @param ... Additional params for getPlayerStats
@@ -176,26 +181,33 @@ getPlayerList.QH <- function(prebuilt=FALSE) {
 #' @export
 #' @keywords internal
 scrapeByNumber <- function(player_list, group_by = 1000, long_sleep = 120, combine = TRUE,
-  directory = "./data/players/", ...) {
+  directory = "./data/players/", start_at = 1, save_player_list = TRUE, ...) {
+  if (substring(directory, nchar(directory)) != '/')
+    directory<-paste0(directory, '/')
   if (!dir.exists(directory))
     dir.create(directory, recursive = TRUE)
-  for (num in c(1:(player_list[nrow(player_list), 'PlayerNum']/group_by))) {
+  if (start_at > nrow(player_list))
+    return(FALSE)
+  for (num in c(start_at:(player_list[nrow(player_list), 'PlayerNum']/group_by))) {
     start<-((num-1)*group_by)+1
     end<-num*group_by
     if (end > nrow(player_list))
       end<-nrow(player_list)
+    if (end < start)
+      break
     message(paste0("Getting players from ", start, " to ", end,"."))
     ps <- getPlayerStats.QH(player_list[c(start:end),], ...)
-    player_list[player_list$PlayerNum %in% ps$pdrop,]<-FALSE
+    player_list[player_list$PlayerNum %in% ps$pdrop, 'Exists']<-FALSE
     player_list<-merge(player_list[,c("PlayerNum", "Exists")], ps$PlayerMeta[,c("PlayerNum", "Name")], by="PlayerNum", all=TRUE)
     ps$pdrop<-NULL
     if (!is.null(ps)) {
       saveRDS(ps, paste0(directory, "QH_players_", start, "-", end, ".RDS"))
     }
-    else
+    if (save_player_list)
+      player_list_internal<-player_list
+      devtools::use_data(player_list_internal, internal = TRUE, overwrite = TRUE)
     Sys.sleep(long_sleep)
   }
-  devtools::use_data(player_list, internal = TRUE, overwrite = TRUE)
   gc(verbose = FALSE)
   message("All player data downloaded")
   if (combine == TRUE) {
@@ -216,6 +228,8 @@ scrapeByNumber <- function(player_list, group_by = 1000, long_sleep = 120, combi
 #' @keywords internal
 combinePlayerDataFrames.QH <- function(directory = "./data/players/", return_data_frame = TRUE, ...) {
   message("Combining all player data to one object")
+  if (substring(directory, nchar(directory)) != '/')
+    directory<-paste0(directory, '/')
   if (!dir.exists(directory))
     dir.create(directory, recursive = TRUE)
   ldf <- list()
@@ -223,19 +237,21 @@ combinePlayerDataFrames.QH <- function(directory = "./data/players/", return_dat
   players <- list()
   goalies <- list()
   files<-list.files(path=directory, pattern='QH_players_[0-9\\-]+\\.RDS', full.names = TRUE)
-  for (f in 1:length(files)) {
-    fl<-files[f]
-    if (file.exists(fl)) {
-      tryCatch({
-        ldf[[f]] <- readRDS(fl)
-      }, error = function(e) message(paste0("Error opening file ",fl, ", Skipping...")))
-      if (!is.null(ldf[[f]])) {
-        meta[[f]] <- ldf[[f]][[3]]
-        goalies[[f]] <- ldf[[f]][[2]]
-        players[[f]] <- ldf[[f]][[1]]
+  if (length(files) > 0){
+    for (f in 1:length(files)) {
+      fl<-files[f]
+      if (file.exists(fl)) {
+        tryCatch({
+          ldf[[f]] <- readRDS(fl)
+        }, error = function(e) message(paste0("Error opening file ",fl, ", Skipping...")))
+        if (!is.null(ldf[[f]])) {
+          meta[[f]] <- ldf[[f]][[3]]
+          goalies[[f]] <- ldf[[f]][[2]]
+          players[[f]] <- ldf[[f]][[1]]
+        }
+      } else {
+        message(paste0("File '", fl, "' does not exist."))
       }
-    } else {
-      message(paste0("File '", fl, "' does not exist."))
     }
   }
   all_players <- plyr::rbind.fill(players)
@@ -333,7 +349,7 @@ processPlayerData.QH <- function(player_data, ...) {
 #' This is a one-command function to scrape and clean all player data available from Quanthockey.com. This takes many hours.
 #' Also saves results to a dated .RDS file.
 #'
-#' @param data_dir Directory to store data
+#' @param directory Directory to store data
 #' @param player_list A player list of the type type created by \code{\link{getPlayerList.QH}}
 #' @param ... Additional parameters to pass
 #'
@@ -346,64 +362,19 @@ processPlayerData.QH <- function(player_data, ...) {
 #' @examples
 #' \dontrun{scrapePlayers.QH()}
 #' \dontrun{scrapePlayers.QH(sleep=15, long_sleep=180, group_by=500)}
-scrapePlayers.QH <- function(data_dir = "./data/players/", player_list=getPlayerList.QH(), ...) {
-  if (!dir.exists(data_dir))
-    dir.create(data_dir, recursive = TRUE)
-  player_data <- scrapeByNumber(player_list = player_list, directory = data_dir, ...)
-  player_data <- processPlayerData.QH(player_data, ...)
-  saveRDS(player_data, paste0(data_dir, "QH_allPlayers-", Sys.Date(), ".RDS"))
-  return(player_data)
-}
-
-#' Update player information (don't rescrape old players) from Quanthockey.com.
-#'
-#' @param player_data The player_data data.frame to update
-#' @param data_dir The data dir of stored player information
-#' @param years_back The number of years to go back (will scrape all players currently active + past \code{years_back} years)
-#' @param player_list Optional player list to scrape from (default NULL --> get updated player list)
-#' @param ... Additional parameters to pass
-#'
-#' @return a list of three updated cleaned data.frames, containing
-#' \item{PlayerStats}{Combined player statistics}
-#' \item{GoalieStats}{Combined goalie statistics}
-#' \item{PlayerMeta}{Meta statistics for all (goalies and players)}
-#' @export
-#'
-#' @examples
-#' \dontrun{updatePlayers.QH()}
-#' \dontrun{updatePlayers.QH(data_dir = './data/', years_back=2}
-updatePlayers.QH <- function(player_data, data_dir = "./data/players/", years_back = 1, player_list = NULL,
-  ...) {
-
-  if (is.null(player_list)) {
-    player_list <- getPlayerList.QH(...)
+scrapePlayers.QH <- function(player_list, directory = "./data/players/", ...) {
+  if (substring(directory, nchar(directory)) != '/')
+    directory<-paste0(directory, '/')
+  if (!dir.exists(directory))
+    dir.create(directory, recursive = TRUE)
+  player_data <- scrapeByNumber(player_list = player_list, directory = directory, ...)
+  if (class(player_data)=='logical') {
+    if (!player_data)
+      message("Error in getting player data. Check your parameters.")
   }
-  active <- player_list$Active
-  active[active == ""] <- "0-0"
-  active[is.na(active)] <- "0-0"
-  player_list$ActiveEnd <- unlist(lapply(active, function(x) as.numeric(unlist(strsplit(x, "-")))[2]))
-  update_players <- player_list[player_list$ActiveEnd >= as.numeric(format(Sys.Date(), "%Y")) -
-    years_back, ]
-  update_players$ActiveEnd <- NULL
-
-  new_player_data <- player_data[[1]]
-  new_goalie_data <- player_data[[2]]
-  new_meta <- player_data[[3]]
-
-  new_player_data <- new_player_data[!new_player_data$Name %in% unique(update_players$Name), ]
-  new_goalie_data <- new_goalie_data[!new_goalie_data$Name %in% unique(update_players$Name), ]
-  new_meta <- new_player_data[!new_meta$Name %in% unique(update_players$Name), ]
-
-  p <- scrapeByNumber(player_list = update_players, directory = data_dir, ...)
-  p_player <- p[[1]]
-  p_goalie <- p[[2]]
-  p_meta <- p[[3]]
-  p_player <- plyr::rbind.fill(p_player, new_player_data)
-  p_goalie <- plyr::rbind.fill(p_goalie, new_goalie_data)
-  p_meta <- plyr::rbind.fill(p_meta, new_meta)
-  p <- list(PlayerStats = p_player, GoalieStats = p_goalie, PlayerMeta = p_meta)
-
-  new_player_data <- processPlayerData.QH(p, ...)
-  saveRDS(new_player_data, paste0(data_dir, "QH_allPlayers-", Sys.Date(), ".RDS"))
-  return(new_player_data)
+  else {
+    player_data <- processPlayerData.QH(player_data, ...)
+    saveRDS(player_data, paste0(directory, "QH_allPlayers-", Sys.Date(), ".RDS"))
+  }
+  return(player_data)
 }

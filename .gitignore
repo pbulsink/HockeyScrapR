@@ -78,3 +78,4 @@ $RECYCLE.BIN/
 .Rproj.user
 
 tests/testthat/allPlayers.RDS
+data/*

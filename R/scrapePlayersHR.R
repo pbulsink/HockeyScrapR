@@ -1,4 +1,3 @@
-
 #' Get a list of Players
 #' Download the full list of active and past players from Hockey-Reference.com
 #'
@@ -13,7 +12,7 @@
 #' \item{Active}{Whether the player is currently active}
 #' @export
 getPlayerList.HR <- function(sleep = 30, letters = letters) {
-  pattern <- "<p class=\"([a-z\\_]+)\">(?:<strong>)*<a href=\"(\\/players\\/[a-z]+\\/[a-zA-Z0-9]+\\.html)\">([a-zA-Z ]+)<\\/a>(?:<\\/strong>)*\\s*\\(([0-9-]+)*"
+  pattern <- "<p class=\"([a-z\\_]+)\">(?:<strong>)*<a href=\"(\\/players\\/[\\p{Ll}]+\\/[\\p{L}0-9]+\\.html)\">([\\p{L}\\s]+)<\\/a>(?:<\\/strong>)*\\s*\\(([0-9-]+)*"
   player_list <- data.frame(Complete = character(), BlnNHL = character(), URL = character(), Name = character(),
     Active = character())
   for (letter in letters) {
@@ -65,7 +64,7 @@ scrapePlInfo.HR <- function(url) {
   meta_h_w <- stringr::str_match(htmlpage, m2)[, c(2:5)]
   names(meta_h_w) <- c("HeightImp", "WeightImp", "HeightMetric", "WeightMetric")
 
-  m3 <- "data-birth=\"([0-9-]*)\"+>.+\"birthPlace\">\\s*in\\&nbsp;([A-Za-z\\.(?:\\&nbsp;)]*),.+country=([A-Za-z\\.(?:\\&nbsp;)]*).+province=([A-Za-z\\.(?:\\&nbsp;)]*).+state=([A-Za-z\\.(?:\\&nbsp;)]*)\""
+  m3 <- "data-birth=\"([0-9-]*)\"+>.+\"birthPlace\">\\s*in\\&nbsp;([\\p{L}\\.(?:\\&nbsp;)]*),.+country=([\\p{L}\\.(?:\\&nbsp;)]*).+province=([\\p{L}\\.(?:\\&nbsp;)]*).+state=([A-Za-z\\.(?:\\&nbsp;)]*)\""
   meta_birth <- stringr::str_match(htmlpage, m3)[2:6]
   names(meta_birth) <- c("Birthdate", "BirthPlace", "Country", "Province", "State")
 

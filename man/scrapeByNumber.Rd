@@ -7,7 +7,8 @@ A function to scrape and save player tables by last name, breaking up the scrapi
 into each chunk to prevent progress loss by scraping error (HTML error)}
 \usage{
 scrapeByNumber(player_list, group_by = 1000, long_sleep = 120,
-  combine = TRUE, directory = "./data/players/", ...)
+  combine = TRUE, directory = "./data/players/", start_at = 1,
+  save_player_list = TRUE, ...)
 }
 \arguments{
 \item{player_list}{a player list (data.frame) of the type created by \code{\link{getPlayerList.QH}}}
@@ -19,6 +20,10 @@ scrapeByNumber(player_list, group_by = 1000, long_sleep = 120,
 \item{combine}{Whether to combine all player data.frames (groups) after downloading}
 
 \item{directory}{Where to store data files}
+
+\item{start_at}{The playernumber to start at. Default = 1}
+
+\item{save_player_list}{Whether to save the player list}
 
 \item{...}{Additional params for getPlayerStats}
 }
