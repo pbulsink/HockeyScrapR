@@ -29,11 +29,7 @@ test_that("Scraping Player by Alphabet works", {
     expect_true(file.exists(f1))
     expect_false(file.exists("./HR_players_a.RDS"))
     expect_false(file.exists("./HR_players_b.RDS"))
-    if (file.exists(f1)) {
-        tryCatch({
-            file.remove(f1, showWarnings = FALSE)
-        }, error = function(e) message(paste0("Error deleting file ", f1, ", Continuing...")))
-    }
+    try_delete(f1)
 })
 
 test_that("Player Processing Works", {
@@ -63,10 +59,5 @@ test_that("Updates Work", {
 
     f1 <- paste0("./HR_allPlayers-", Sys.Date(), ".RDS")
     expect_true(file.exists(f1))
-    if (file.exists(f1)) {
-        tryCatch({
-            file.remove(f1, showWarnings = FALSE)
-        }, error = function(e) message(paste0("Error deleting file ", f1, ", Continuing...")))
-    }
-
+    try_delete(f1)
 })

@@ -203,9 +203,10 @@ scrapeByNumber <- function(player_list, group_by = 1000, long_sleep = 120, combi
     if (!is.null(ps)) {
       saveRDS(ps, paste0(directory, "QH_players_", start, "-", end, ".RDS"))
     }
-    if (save_player_list)
+    if (save_player_list){
       player_list_internal<-player_list
       devtools::use_data(player_list_internal, internal = TRUE, overwrite = TRUE)
+    }
     Sys.sleep(long_sleep)
   }
   gc(verbose = FALSE)

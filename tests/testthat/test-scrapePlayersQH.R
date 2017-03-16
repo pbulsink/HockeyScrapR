@@ -14,6 +14,7 @@ test_that("getPlayerList returns ok", {
     expect_equal(dim(pl2)[2], 3)
     expect_named(pl2, pl_names.QH)
     expect_lt(sum(pl2$Exists), 50000)
+
 })
 
 test_that("Players are properly scraped", {
@@ -23,9 +24,5 @@ test_that("Players are properly scraped", {
     expect_equivalent(pstats, player_mini_data)
     f1<-paste0("./QH_allPlayers-",Sys.Date(),".RDS")
     expect_true(file.exists(f1))
-    if (file.exists(f1)) {
-      tryCatch({
-        file.remove(f1, showWarnings = FALSE)
-      }, error = function(e) message(paste0("Error deleting file ", f1, ", Continuing...")))
-    }
+    try_delete(f1)
 })
