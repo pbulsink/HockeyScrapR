@@ -14,7 +14,6 @@ test_that("getPlayerList returns ok", {
     expect_equal(dim(pl2)[2], 3)
     expect_named(pl2, pl_names.QH)
     expect_lt(sum(pl2$Exists), 50000)
-
 })
 
 test_that("Players are properly scraped", {

@@ -298,7 +298,7 @@ scrapeByAlphabet.HR <- function(player_list, letters_to_scrape = letters, long_s
     ps <- getPlayerStats.HR(player_list[startsWith(player_list$URL, paste0("/players/", letter)),
       ], ...)
     if (!is.null(ps)) {
-      saveRDS(ps, paste0(directory, "HR_players_", letter, ".RDS"))
+      saveRDS(ps, paste0(directory, "players_", letter, ".RDS"))
     }
     Sys.sleep(long_sleep)
   }
@@ -327,10 +327,10 @@ combinePlayerDataFrames.HR <- function(directory = "./data/players/", return_dat
   players <- list()
   goalies <- list()
   for (letter in letters) {
-    f <- paste0(directory, "HR_players_", letter, ".RDS")
+    f <- paste0(directory, "players_", letter, ".RDS")
     if (file.exists(f)) {
       tryCatch({
-        ldf[[letter]] <- readRDS(paste0(directory, "HR_players_", letter, ".RDS"))
+        ldf[[letter]] <- readRDS(paste0(directory, "players_", letter, ".RDS"))
       }, error = function(e) message(paste0("Error opening file players_", letter, ".RDS, Skipping...")))
       if (!is.null(ldf[[letter]])) {
         meta[[letter]] <- ldf[[letter]][[3]]
@@ -347,7 +347,7 @@ combinePlayerDataFrames.HR <- function(directory = "./data/players/", return_dat
   all_df <- list(PlayerStats = all_players, GoalieStats = all_goalies, PlayerMeta = all_meta)
   saveRDS(all_df, paste0(directory, "HR_allPlayers-", Sys.Date(), ".RDS"))
   for (letter in letters) {
-    f <- paste0(directory, "HR_players_", letter, ".RDS")
+    f <- paste0(directory, "players_", letter, ".RDS")
     if (file.exists(f)) {
       tryCatch({
         file.remove(f)

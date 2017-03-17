@@ -5,7 +5,7 @@ context("Testing scraping player data")
 source("helper-scrapePlayersHR.R")
 
 test_that("getPlayerList returns ok", {
-  player_list <- getPlayerList(sleep = 0, letters = "a")
+  player_list <- getPlayerList.HR(sleep = 0, letters = "a")
 
   expect_named(player_list, pl_names)
   expect_equivalent(player_list[1, ], pl_aa)
@@ -26,15 +26,11 @@ test_that("Scraping Player by Alphabet works", {
   player_ab <- combinePlayerDataFrames.HR(directory = "./")
 
   expect_equivalent(player_ab, player_ab_data)
-  expect_true(file.exists("./allPlayers.RDS"))
+  f1 <- paste0("HR_allPlayers-", Sys.Date(), ".RDS")
+  expect_true(file.exists(f1))
   expect_false(file.exists("./players_a.RDS"))
   expect_false(file.exists("./players_b.RDS"))
-  f1 <- "./allPlayers.RDS"
-  if (file.exists(f1)) {
-    tryCatch({
-      file.remove(f1, showWarnings = FALSE)
-    }, error = function(e) message(paste0("Error deleting file ", f1, ", Continuing...")))
-  }
+  try_delete(f1)
 })
 
 test_that("Player Processing Works", {
@@ -62,12 +58,8 @@ test_that("Updates Work", {
 
   expect_equal(sum(p$Season == "2016-17"), 1)
 
-  f1 <- paste0("./allPlayers-", Sys.Date(), ".RDS")
+  f1 <- paste0("./HR_allPlayers-", Sys.Date(), ".RDS")
   expect_true(file.exists(f1))
-  if (file.exists(f1)) {
-    tryCatch({
-      file.remove(f1, showWarnings = FALSE)
-    }, error = function(e) message(paste0("Error deleting file ", f1, ", Continuing...")))
-  }
+  try_delete(f1)
 
 })
