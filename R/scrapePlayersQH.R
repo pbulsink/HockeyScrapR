@@ -19,7 +19,20 @@ scrapePlInfo.QH <- function(url) {
   htmlpage <- gsub(htmlpage, pattern = "-->", replacement = "")
 
   # Read in Tables
-  tables <- XML::readHTMLTable(htmlpage)
+  tables <- XML::readHTMLTable(htmlpage, stringsAsFactors=FALSE)
+
+  #This fixes weird XML processing of the non-breaking hyphen in years
+  for (t in 1:length(tables)){
+    if('Season' %in% names(tables[[t]])){
+      tables[[t]]$Season<-as.character(tables[[t]]$Season)
+      for(s in 1:length(tables[[t]]$Season)){
+        if(tables[[t]]$Season[s] != ""){
+          yrs<-stringr::str_match(tables[[t]]$Season[s],'([0-9]{4}).+([0-9]{2})')
+          tables[[t]]$Season[s]<-paste(c(yrs[,2],yrs[,3]), collapse = '-')
+        }
+      }
+    }
+  }
 
   m1 <- "<h1 itemprop=\"name\" id=\"pp_title\">([\\p{L}\\s\\'\\-]+)<\\/h1>"
   meta_name <- stringr::str_match(htmlpage, m1)[, 2]
@@ -34,15 +47,15 @@ scrapePlInfo.QH <- function(url) {
   meta_birthplace <- stringr::str_trim(stringr::str_match(htmlpage, m3)[,c(2:4)])
   names(meta_birthplace) <- c("Birthplace", "Province", "Country")
 
-  m4 <- "<p>(Forward|Defenseman|Goalie),?\\s?(?:shoots|catches)?\\s?(left|right)?<\\/p>"
+  m4 <- "<br>(Forward|Defenseman|Goalie),?\\s?(?:shoots|catches)?\\s?(left|right)?<br>"
   meta_pos <- stringr::str_match(htmlpage, m4)[,c(2:3)]
   names(meta_pos) <- c("Position", "Handed")
 
-  m5 <- "<p>([0-9])\\s?\\'\\s?([0-9]+)\\s?\"\\s?\\|\\s?([0-9]+)\\s?lb<\\/p>"
+  m5 <- "<br>([0-9])\\s?\\'\\s?([0-9]+)\\s?\"\\s?\\|\\s?([0-9]+)\\s?lb<br>"
   meta_size <- stringr::str_match(htmlpage, m5)[,c(2:4)]
   names(meta_size) <- c("Feet", "Inches", "Weight")
 
-  m6 <- "<p class=\"hl draft\">Drafted by: <a href=\"\\/nhl-draft\\/en\\/teams\\/(?:[a-zA-Z\\-]+)\\.html\">([A-Za-z\\s]+)<\\/a>, ([0-9]+)\\. round \\(\\#([0-9]+) overall\\), in <a href=\"[\\/a-z0-9\\-\\.]+\">([0-9]+) NHL Entry Draft<\\/a><\\/p>"
+  m6 <- "<span class=\"hl draft\">Drafted by: <a href=\"\\/nhl-draft\\/en\\/teams\\/(?:[a-zA-Z\\-]+)\\.html\">([A-Za-z\\s]+)<\\/a>, ([0-9]+)\\. round \\(\\#([0-9]+) overall\\), in <a href=\"[\\/a-z0-9\\-\\.]+\">([0-9]+) NHL (?:Entry|Amateur) Draft<\\/a><\\/span>"
   meta_draft <- stringr::str_match(htmlpage, m6)[, c(2:5)]
   names(meta_draft)<-c("DraftTeam", "DraftRound","DraftOverall","DraftYear")
 
@@ -293,6 +306,8 @@ processPlayerData.QH <- function(player_data, ...) {
   numeric_columns <- c("Age", "GP", "G", "A", "P", "+/-", "PIM", "PPG", "SHG", "GWG", "SH%",
                        "GAA", "SV%", "W", "L", "GA", "SV", "SO", "PlayerNum", "DraftYear", "DraftOverall",
                        "DraftRound","Weight","Inches","Feet")
+
+
   pnames <- colnames(players)
   players <- data.frame(lapply(players, as.character), stringsAsFactors = FALSE)
   colnames(players) <- pnames

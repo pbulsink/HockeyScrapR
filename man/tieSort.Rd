@@ -16,4 +16,3 @@ elo score value
 This function sorts scores (including ties) into [0..1] win ratio for elo
 }
 \keyword{internal}
-

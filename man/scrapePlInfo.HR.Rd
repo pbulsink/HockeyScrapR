@@ -22,4 +22,3 @@ A function to manage scraping all of the info from Hockey-Reference.com player p
 Also perform collection player meta info (name, birth, etc)
 }
 \keyword{internal}
-

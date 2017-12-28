@@ -1,24 +1,24 @@
 #' testthat
 #' updatePlayerInfo (given old player) gets new player
 
-context("Testing scraping player data")
+context("Testing scraping player data from HR")
 source("helper-scrapePlayersHR.R")
 
-test_that("getPlayerList returns ok", {
+test_that("getPlayerList from HR returns ok", {
   player_list <- getPlayerList.HR(sleep = 0, letters = "a")
 
   expect_named(player_list, pl_names)
   expect_equivalent(player_list[1, ], pl_aa)
 })
 
-test_that("Players are properly scraped", {
-  pstats <- getPlayerStats.HR(player_list[], sleep = 10)
+test_that("Players are properly scraped from HR", {
+  pstats <- getPlayerStats.HR(player_list[c(1:6),], sleep = 10)
 
   expect_type(pstats, "list")
   expect_equivalent(pstats, player_stats)
 })
 
-test_that("Scraping Player by Alphabet works", {
+test_that("Scraping Player from HR by Alphabet works", {
   player_ab <- scrapeByAlphabet.HR(pl_ab, long_sleep = 0, sleep = 10, directory = "./", combine = FALSE)
   expect_true(player_ab)
   expect_true(file.exists("./players_a.RDS"))
@@ -33,7 +33,7 @@ test_that("Scraping Player by Alphabet works", {
   try_delete(f1)
 })
 
-test_that("Player Processing Works", {
+test_that("HR Player Processing Works", {
   p_data <- processPlayerData.HR(player_stats)
 
   expect_type(p_data, "list")
@@ -50,13 +50,13 @@ test_that("Player Processing Works", {
   expect_type(object = meta$Birthdate, "character")
 })
 
-test_that("Updates Work", {
+test_that("HR Updates Work", {
   p_new <- updatePlayers.HR(pl_data_oldnew, data_dir = "./", player_list = pl_list_oldnew, sleep = 5,
     long_sleep = 0)
 
   p <- p_new[[1]]
 
-  expect_equal(sum(p$Season == "2016-17"), 1)
+  expect_equal(sum(p$Season == "2017-18"), 1)
 
   f1 <- paste0("./HR_allPlayers-", Sys.Date(), ".RDS")
   expect_true(file.exists(f1))

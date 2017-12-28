@@ -24,4 +24,3 @@ a data.frame containing:
 Get a list of Players
 Download the full list of active and past players from Hockey-Reference.com
 }
-

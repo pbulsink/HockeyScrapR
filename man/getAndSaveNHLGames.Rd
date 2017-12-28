@@ -22,4 +22,3 @@ getAndSaveNHLGames(start = 1918, end = 2017, sleep = 30,
 Download NHL games scores from Hockey-Reference.com
 }
 \keyword{internal}
-

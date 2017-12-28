@@ -25,4 +25,3 @@ Also saves results to a dated .RDS file.
 \dontrun{scrapePlayers.HR()}
 \dontrun{scrapePlayers.HR(sleep=15, long_sleep=180)}
 }
-

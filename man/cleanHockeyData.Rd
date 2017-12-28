@@ -30,4 +30,3 @@ Returns a cleaned data frame of hockey scores, with options as selected
 Clean the CSV imported hockey data
 }
 \keyword{internal}
-

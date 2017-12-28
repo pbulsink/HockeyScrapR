@@ -27,4 +27,3 @@ Also saves results to a dated .RDS file.
 \dontrun{scrapePlayers.QH()}
 \dontrun{scrapePlayers.QH(sleep=15, long_sleep=180, group_by=500)}
 }
-

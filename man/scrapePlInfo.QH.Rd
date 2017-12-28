@@ -22,4 +22,3 @@ A function to manage scraping all of the info from Quanthockey.com player pages.
 Also perform collection player meta info (name, birth, etc)
 }
 \keyword{internal}
-

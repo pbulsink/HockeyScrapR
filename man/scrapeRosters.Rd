@@ -23,4 +23,3 @@ Also saves results to a dated .RDS file.
 scrapeRosters()
 }
 }
-

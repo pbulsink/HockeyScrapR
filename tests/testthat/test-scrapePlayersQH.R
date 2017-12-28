@@ -3,7 +3,7 @@
 context("Testing scraping player data for QuantHockey")
 source("helper-scrapePlayersQH.R")
 
-test_that("getPlayerList returns ok", {
+test_that("getPlayerList from QH returns ok", {
     pl <- getPlayerList.QH()
     expect_equal(dim(pl)[1], 50000)
     expect_equal(dim(pl)[2], 3)
@@ -16,7 +16,7 @@ test_that("getPlayerList returns ok", {
     expect_lt(sum(pl2$Exists), 50000)
 })
 
-test_that("Players are properly scraped", {
+test_that("Players are properly scraped from QH", {
     pstats <- scrapePlayers.QH(player_list=player_list.QH, sleep = 10, long_sleep=0, directory = '.', save_player_list=FALSE)
     expect_type(pstats, "list")
 

@@ -22,4 +22,3 @@ getAndSaveWHAGames(start = 1973, end = 1979, sleep = 30,
 Download WHA games scores from Hockey-Reference.com
 }
 \keyword{internal}
-

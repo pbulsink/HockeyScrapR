@@ -28,4 +28,3 @@ returns a un-cleaned data frame from NHL and WHA score csv files
 Read in Hockey Data csv files.
 }
 \keyword{internal}
-

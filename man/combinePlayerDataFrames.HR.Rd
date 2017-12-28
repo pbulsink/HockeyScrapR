@@ -23,4 +23,3 @@ Combine single letter player data frames
 Easily combine player data.frames into one single RDS file.
 }
 \keyword{internal}
-
