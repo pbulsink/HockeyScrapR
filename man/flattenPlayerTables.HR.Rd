@@ -21,4 +21,3 @@ Read each table on hockey-reference.com and flatten to single useful tables.
 Avoids tables such as last5, awards, etc.
 Melts all NHL (regular season and playoff) and non-NHL, recording league and playoff status
 }
-

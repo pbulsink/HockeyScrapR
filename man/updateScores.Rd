@@ -23,4 +23,3 @@ Update scores information (don't rescrape old scores).
 \dontrun{updateScores()}
 \dontrun{updatePlayers(score_data, data_dir = './data/'}
 }
-

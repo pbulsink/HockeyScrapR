@@ -36,4 +36,3 @@ A function to scrape and save player tables by last name, breaking up the scrapi
 into each chunk to prevent progress loss by scraping error (HTML error)
 }
 \keyword{internal}
-

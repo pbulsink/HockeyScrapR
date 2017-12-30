@@ -31,4 +31,3 @@ Update player information (don't rescrape old players) from Hockey-Reference.com
 \dontrun{updatePlayers.HR()}
 \dontrun{updatePlayers.HR(data_dir = './data/', years_back=2}
 }
-

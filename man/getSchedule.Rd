@@ -22,4 +22,3 @@ A data.frame of schedule, with scores removed
 \description{
 Get season schedule
 }
-

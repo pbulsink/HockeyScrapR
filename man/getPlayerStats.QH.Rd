@@ -22,4 +22,3 @@ a list of three data.frames, containing
 Get stats for a list of players
 A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.QH}})
 }
-

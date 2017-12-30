@@ -20,4 +20,3 @@ Extra wrapped getURL
 \code{\link[RCurl]{getURL}} wrapped in useragent sampling and try/retry, with referer.
 }
 \keyword{internal}
-
