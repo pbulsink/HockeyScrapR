@@ -4,9 +4,9 @@
 \alias{readHockeyData}
 \title{Read in Hockey Data csv files.}
 \usage{
-readHockeyData(data_dir = "./data/scores/", nhl_year_list = c(1918:2017),
-  wha_year_list = c(1973:1979), playoffs = TRUE, lastPlayoffs = FALSE,
-  ...)
+readHockeyData(data_dir = "./data/scores/",
+  nhl_year_list = c(1918:getCurrentSeason()), wha_year_list = c(1973:1979),
+  playoffs = TRUE, lastPlayoffs = FALSE, ...)
 }
 \arguments{
 \item{data_dir}{The location of the files}

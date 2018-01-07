@@ -4,7 +4,7 @@
 \alias{getAndSaveNHLGames}
 \title{Download and save NHL Games}
 \usage{
-getAndSaveNHLGames(start = 1918, end = 2017, sleep = 30,
+getAndSaveNHLGames(start = 1918, end = getCurrentSeason(), sleep = 30,
   data_dir = "./data/scores/", ...)
 }
 \arguments{

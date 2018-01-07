@@ -73,7 +73,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
 #'
 #' @export
 #' @keywords internal
-getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = "./data/scores/",
+getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 30, data_dir = "./data/scores/",
   ...) {
   if (start == 2005 && end == 2005) {
     message("Can't collect 2004-2005. No season due to lockout. Not collecting any data.")
@@ -98,14 +98,14 @@ getAndSaveNHLGames <- function(start = 1918, end = 2017, sleep = 30, data_dir = 
     message("NHL started in 1917-1918. Collecting data from there forwards.")
     start <- 1918
   }
-  if (start > 2017) {
+  if (start > getCurrentSeason()) {
     message("Can't start collecting data past next season. Collecting final season.")
-    start <- 2017
-    end <- 2017
+    start <- getCurrentSeason()
+    end <- getCurrentSeason()
   }
-  if (end > 2017) {
+  if (end > getCurrentSeason()) {
     message("Can't collect past this season. Collecting up to there.")
-    end <- 2017
+    end <- getCurrentSeason()
   }
 
   message("Scraping NHL games")
@@ -184,7 +184,7 @@ tieSort <- function(game) {
 #' @return returns a un-cleaned data frame from NHL and WHA score csv files
 #' @keywords internal
 #' @export
-readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:2017),
+readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:getCurrentSeason()),
   wha_year_list = c(1973:1979), playoffs = TRUE, lastPlayoffs = FALSE, ...) {
   df_nhl <- data.frame(Date = NULL, Visitor = NULL, G = NULL, Home = NULL, G.1 = NULL,
     X.1 = NULL, stringsAsFactors = FALSE)

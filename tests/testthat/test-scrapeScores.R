@@ -54,15 +54,15 @@ test_that("Testing scraping NHL scores", {
     try_delete(f1)
     try_delete(f2)
 
-    expect_message(getAndSaveNHLGames(start = 2018, end = 2019, data_dir = "./", sleep = 10),
+    expect_message(getAndSaveNHLGames(start = getCurrentSeason()+1, end = getCurrentSeason()+2, data_dir = "./", sleep = 10),
         "Can't start collecting data past next season. Collecting final season.")
-    f1 <- "./20162017.csv"
+    f1 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
     expect_true(file.exists(f1))
     try_delete(f1)
 
-    expect_message(getAndSaveNHLGames(start = 2017, end = 2019, data_dir = "./", sleep = 10),
+    expect_message(getAndSaveNHLGames(start = getCurrentSeason(), end = getCurrentSeason()+2, data_dir = "./", sleep = 10),
         "Can't collect past this season. Collecting up to there.")
-    f1 <- "./20162017.csv"
+    f1 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
     expect_true(file.exists(f1))
     try_delete(f1)
 
@@ -149,7 +149,7 @@ test_that("Scores Update", {
     up_to_date_scores <- updateScores(out_of_date_scores, "./", sleep = 10)
     expect_true(nrow(up_to_date_scores) > nrow(out_of_date_scores))
     f1 <- paste0("./scores-", Sys.Date(), ".RDS")
-    f2 <- paste0("./20162017.csv")
+    f2 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
     expect_true(file.exists(f1))
     expect_true(file.exists(f2))
     try_delete(f1)
@@ -188,7 +188,7 @@ test_that("Schedule returns full cleaned season", {
     expect_true(file.exists(f1))
     try_delete(f1)
 
-    expect_equal(nrow(scraped_schedule), 1230)
+    expect_equal(nrow(scraped_schedule), 1270)
     expect_equal(unique(scraped_schedule$G), "")
     expect_equal(unique(scraped_schedule$G.1), "")
     expect_equal(unique(scraped_schedule$X), "")

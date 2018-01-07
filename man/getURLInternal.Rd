@@ -5,7 +5,7 @@
 \title{Extra wrapped getURL
 \code{\link[RCurl]{getURL}} wrapped in useragent sampling and try/retry, with referer.}
 \usage{
-getURLInternal(url, referer = "http://www.google.com")
+getURLInternal(url, referer = "http://www.google.ca")
 }
 \arguments{
 \item{url}{The URL to try download}

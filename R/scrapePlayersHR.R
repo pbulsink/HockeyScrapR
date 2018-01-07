@@ -64,15 +64,24 @@ scrapePlInfo.HR <- function(url) {
   meta_h_w <- stringr::str_match(htmlpage, m2)[, c(2:5)]
   names(meta_h_w) <- c("HeightImp", "WeightImp", "HeightMetric", "WeightMetric")
 
-  m3 <- "data-birth=\"([0-9-]*)\"+>.+\"birthPlace\">\\s*in\\&nbsp;([\\p{L}\\.(?:\\&nbsp;)]*),.+country=([\\p{L}\\.(?:\\&nbsp;)]*).+province=([\\p{L}\\.(?:\\&nbsp;)]*).+state=([A-Za-z\\.(?:\\&nbsp;)]*)\""
-  meta_birth <- stringr::str_match(htmlpage, m3)[2:6]
+  m3date <- "data-birth=\"([0-9-]*)\">"
+  meta_date <- stringr::str_match(htmlpage, m3date)[, 2]
+  m3town <- "\"birthPlace\">\\sin\\&nbsp;([\\p{L}\\.\\s-]*),\\&nbsp;"
+  meta_town <- stringr::str_match(htmlpage, m3town)[, 2]
+  m3country <- "country=([\\p{L}\\.\\s-]*)\\&amp;"
+  meta_country <- stringr::str_match(htmlpage, m3country)[, 2]
+  m3province <- "province=([\\p{L}\\.\\s-]*)\\&amp;"
+  meta_province <- stringr::str_match(htmlpage, m3province)[, 2]
+  m3state <- "state=([\\p{L}\\.\\s-]*)\">"
+  meta_state <- stringr::str_match(htmlpage, m3state)[,2]
+  meta_birth<-c(meta_date, meta_town, meta_country, meta_province, meta_state)
   names(meta_birth) <- c("Birthdate", "BirthPlace", "Country", "Province", "State")
 
   m4 <- "data-death=\"([0-9-]*)\""
   meta_death <- stringr::str_match(htmlpage, m4)[[1]][2]
   names(meta_death) <- c("Deathdate")
 
-  m5 <- "draft.html\">([A-Za-z]+)<\\/a>,\\s*([0-9A-Za-z]+)\\s*round\\s*\\(([0-9]+)[a-z]{2}\\&nbsp;overall\\), <[a-zA-Z\\s\\/=\"+_0-9]+\\.html\">([0-9]{4})"
+  m5 <- "draft.html\">([A-Za-z]+)<\\/a>,\\s*([0-9]+)[a-z]+\\s*round\\s*\\(([0-9]+)[a-z]{2}\\&nbsp;overall\\), <[a-zA-Z\\s\\/=\"+_0-9]+\\.html\">([0-9]{4})"
   meta_draft <- stringr::str_match_all(htmlpage, m5)[[1]][, c(2:5)]
   if (is.null(nrow(meta_draft)) || nrow(meta_draft) > 0) {
     # handles redrafted players (about 30 players)
@@ -437,8 +446,8 @@ processPlayerData.HR <- function(player_data, drop_awards = TRUE, ...) {
   }
 
   # meta Cleanup
-  meta[!is.na(meta$Birthdate), "Birthdate"] <- as.Date(meta[!is.na(meta$Birthdate), "Birthdate"])
-  meta[!is.na(meta$Deathdate), "Deathdate"] <- as.Date(meta[!is.na(meta$Deathdate), "Deathdate"])
+  meta$Birthdate <- as.POSIXct(meta$Birthdate, tz="UTC")
+  meta$Deathdate <- as.Date(meta$Deathdate, tz="UTC")
 
   imp <- meta$HeightImp
   imp[imp == ""] <- "0-0"
