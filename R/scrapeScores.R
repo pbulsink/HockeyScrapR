@@ -36,7 +36,13 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
 
   message("Scraping WHA games")
   if (progress && start != end) {
-    pb <- utils::txtProgressBar(min = start, max = end, initial = start)
+    pb <- progress::progress_bar$new(
+      format = "  downloading seasons [:bar] :percent eta: :eta",
+      clear = FALSE,
+      width = 80,
+      total=nrow(plist)
+    )
+    pb$tick(0)
   }
 
   for (i in c(start:end)) {
@@ -56,7 +62,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
     }
     Sys.sleep(sleep)
     if (progress && start != end) {
-      utils::setTxtProgressBar(pb, i)
+      pb$tick()
     }
   }
   return(TRUE)
@@ -111,8 +117,15 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
   }
 
   message("Scraping NHL games")
-  if (progress && start != end)
-    pb <- utils::txtProgressBar(min = start, max = end, initial = start)
+  if (progress && start != end){
+    pb <- progress::progress_bar$new(
+      format = "  downloading players [:bar] :percent eta: :eta",
+      clear = FALSE,
+      width = 80,
+      total=nrow(plist)
+    )
+    pb$tick(0)
+  }
 
   for (i in c(start:end)) {
     # No season in 2004-2005. Don't try process that year.
@@ -137,8 +150,9 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       }
     }
     Sys.sleep(sleep)
-    if (progress && start != end)
-      utils::setTxtProgressBar(pb, i)
+    if (progress && start != end){
+      pb$tick()
+    }
   }
   return(TRUE)
 }

@@ -243,7 +243,13 @@ getPlayerStats.HR <- function(player_list, sleep = 30, progress=TRUE) {
   if (nrow(plist) == 0)
     return(NULL)
   if(progress){
-    pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
+    pb <- progress::progress_bar$new(
+      format = "  downloading players [:bar] :percent eta: :eta",
+      clear = FALSE,
+      width = 80,
+      total=nrow(plist)
+    )
+    pb$tick(0)
   }
   player <- 0
   while (player < nrow(plist)) {
@@ -284,7 +290,7 @@ getPlayerStats.HR <- function(player_list, sleep = 30, progress=TRUE) {
         Active = plist[player, "Active"], t(unlist(scrape[[2]]))))
     }
     if(progress){
-      utils::setTxtProgressBar(pb, player)
+      pb$tick()
     }
     Sys.sleep(sleep)
   }

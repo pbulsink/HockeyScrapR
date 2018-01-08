@@ -115,7 +115,13 @@ getPlayerStats.QH <- function(player_list, sleep = 30, progress=TRUE) {
   if (nrow(plist) == 0)
     return(NULL)
   if(progress){
-    pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
+    pb <- progress::progress_bar$new(
+      format = "  downloading players [:bar] :percent eta: :eta",
+      clear = FALSE,
+      width = 80,
+      total=nrow(plist)
+      )
+    pb$tick(0)
   }
   player <- 0
   while (player < nrow(plist)) {
@@ -146,7 +152,7 @@ getPlayerStats.QH <- function(player_list, sleep = 30, progress=TRUE) {
       player_meta_tables <- plyr::rbind.fill(player_meta_tables, data.frame(t(metas)))
     }
     if(progress){
-      utils::setTxtProgressBar(pb, player)
+      pb$tick()
     }
     Sys.sleep(sleep)
   }
