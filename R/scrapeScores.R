@@ -40,7 +40,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
       format = "  downloading seasons [:bar] :percent eta: :eta",
       clear = FALSE,
       width = 80,
-      total=nrow(plist)
+      total=end-start+1
     )
     pb$tick(0)
   }
@@ -122,7 +122,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       format = "  downloading players [:bar] :percent eta: :eta",
       clear = FALSE,
       width = 80,
-      total=nrow(plist)
+      total=end-start+1
     )
     pb$tick(0)
   }
@@ -151,7 +151,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
     }
     Sys.sleep(sleep)
     if (progress && start != end){
-      pb$tick()
+      utils::setTxtProgressBar(pb, i)
     }
   }
   return(TRUE)

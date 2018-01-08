@@ -114,7 +114,7 @@ getPlayerStats.QH <- function(player_list, sleep = 30, progress=TRUE) {
   pdrop <- NULL
   if (nrow(plist) == 0)
     return(NULL)
-  if(progress){
+  if(progress && nrow(plist) > 1){
     pb <- progress::progress_bar$new(
       format = "  downloading players [:bar] :percent eta: :eta",
       clear = FALSE,
@@ -151,10 +151,11 @@ getPlayerStats.QH <- function(player_list, sleep = 30, progress=TRUE) {
       }
       player_meta_tables <- plyr::rbind.fill(player_meta_tables, data.frame(t(metas)))
     }
+
+    Sys.sleep(sleep)
     if(progress){
       pb$tick()
     }
-    Sys.sleep(sleep)
   }
   if (length(pdrop)>0){
     m1<-paste0("Error getting ",length(pdrop), ' player record(s):\n')

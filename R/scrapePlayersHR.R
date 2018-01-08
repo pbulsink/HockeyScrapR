@@ -242,7 +242,7 @@ getPlayerStats.HR <- function(player_list, sleep = 30, progress=TRUE) {
   pdrop <- NULL
   if (nrow(plist) == 0)
     return(NULL)
-  if(progress){
+  if(progress && nrow(plist) > 1){
     pb <- progress::progress_bar$new(
       format = "  downloading players [:bar] :percent eta: :eta",
       clear = FALSE,
@@ -289,10 +289,10 @@ getPlayerStats.HR <- function(player_list, sleep = 30, progress=TRUE) {
       player_meta_tables <- plyr::rbind.fill(player_meta_tables, data.frame(Name = pname,
         Active = plist[player, "Active"], t(unlist(scrape[[2]]))))
     }
+    Sys.sleep(sleep)
     if(progress){
       pb$tick()
     }
-    Sys.sleep(sleep)
   }
   return(list(PlayerStats = player_stats_tables, GoalieStats = goalie_stats_tables, PlayerMeta = player_meta_tables))
 }
