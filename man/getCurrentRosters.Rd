@@ -4,12 +4,14 @@
 \alias{getCurrentRosters}
 \title{Get Current estimated rosters}
 \usage{
-getCurrentRosters(sleep = 30, teamUrlList = teamURLList)
+getCurrentRosters(sleep = 30, teamUrlList = teamURLList, progress = TRUE)
 }
 \arguments{
 \item{sleep}{The amount of time to sleep between requests}
 
 \item{teamUrlList}{A list of team roster page urls on dailyfaceoff.com. Defaults to correct team URLs.}
+
+\item{progress}{Whether to show a progress bar. Default = TRUE.}
 }
 \value{
 a long data frame with three columns:

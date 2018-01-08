@@ -17,7 +17,7 @@ test_that("getPlayerList from QH returns ok", {
 })
 
 test_that("Players are properly scraped from QH", {
-    pstats <- scrapePlayers.QH(player_list=player_list.QH, sleep = 10, long_sleep=0, directory = '.', save_player_list=FALSE)
+    pstats <- scrapePlayers.QH(player_list=player_list.QH, sleep = 10, long_sleep=0, directory = '.', save_player_list=FALSE, progress=FALSE)
     expect_type(pstats, "list")
 
     #expect_equivalent(pstats, player_mini_data)

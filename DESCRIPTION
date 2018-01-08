@@ -12,6 +12,7 @@ Imports:
     plyr,
     stringr,
     XML,
+    progress,
     utils,
     devtools
 Suggests:

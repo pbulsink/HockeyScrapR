@@ -12,7 +12,7 @@ test_that("getPlayerList from HR returns ok", {
 })
 
 test_that("Players are properly scraped from HR", {
-  pstats <- getPlayerStats.HR(player_list[c(1:6),], sleep = 10)
+  pstats <- getPlayerStats.HR(player_list[c(1:6),], sleep = 10, progress=FALSE)
 
   expect_type(pstats, "list")
   expect_true(length(pstats) == 3)
@@ -20,7 +20,7 @@ test_that("Players are properly scraped from HR", {
 })
 
 test_that("Scraping Player from HR by Alphabet works", {
-  player_ab <- scrapeByAlphabet.HR(pl_ab, long_sleep = 0, sleep = 10, directory = "./", combine = FALSE)
+  player_ab <- scrapeByAlphabet.HR(pl_ab, long_sleep = 0, sleep = 10, directory = "./", combine = FALSE, progress=FALSE)
   expect_true(player_ab)
   expect_true(file.exists("./players_a.RDS"))
   expect_true(file.exists("./players_b.RDS"))
@@ -52,7 +52,7 @@ test_that("HR Player Processing Works", {
 
 test_that("HR Updates Work", {
   p_new <- updatePlayers.HR(pl_data_oldnew, data_dir = "./", player_list = pl_list_oldnew, sleep = 5,
-    long_sleep = 0)
+    long_sleep = 0, progress=FALSE)
 
   p <- p_new[[1]]
 
