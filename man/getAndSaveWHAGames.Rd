@@ -5,7 +5,7 @@
 \title{Download and save WHA Games}
 \usage{
 getAndSaveWHAGames(start = 1973, end = 1979, sleep = 30,
-  data_dir = "./data/scores/", ...)
+  data_dir = "./data/scores/", progress = TRUE, ...)
 }
 \arguments{
 \item{start}{Starting season to download. Season is \code{value-1 to value} (eg. start=1973 --> 1972-1973 season)}
@@ -15,6 +15,8 @@ getAndSaveWHAGames(start = 1973, end = 1979, sleep = 30,
 \item{sleep}{Time to sleep between scrapes}
 
 \item{data_dir}{Location to save the csv data}
+
+\item{progress}{Whether to show a progress bar. Default = TRUE.}
 
 \item{...}{Additional parameters to pass}
 }

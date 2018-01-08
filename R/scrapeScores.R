@@ -6,11 +6,12 @@
 #' @param end Last season to download
 #' @param sleep Time to sleep between scrapes
 #' @param data_dir Location to save the csv data
+#' @param progress Whether to show a progress bar. Default = TRUE.
 #' @param ... Additional parameters to pass
 #'
 #' @export
 #' @keywords internal
-getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = "./data/scores/",
+getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = "./data/scores/", progress = TRUE,
   ...) {
   if (start > end) {
     message("Start must be less than end. Reversing values.")
@@ -34,7 +35,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
   }
 
   message("Scraping WHA games")
-  if (start != end) {
+  if (progress && start != end) {
     pb <- utils::txtProgressBar(min = start, max = end, initial = start)
   }
 
@@ -54,7 +55,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
       utils::write.csv(playoff, file = paste0(data_dir, "wha", i - 1, i, "Playoffs.csv"))
     }
     Sys.sleep(sleep)
-    if (start != end) {
+    if (progress && start != end) {
       utils::setTxtProgressBar(pb, i)
     }
   }
@@ -69,11 +70,12 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
 #' @param end Last season to download
 #' @param sleep Time to sleep between scrapes
 #' @param data_dir Location to save the csv data
+#' @param progress Whether to show a progress bar. Default = TRUE
 #' @param ... Additional parameters to pass
 #'
 #' @export
 #' @keywords internal
-getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 30, data_dir = "./data/scores/",
+getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 30, data_dir = "./data/scores/", progress = TRUE,
   ...) {
   if (start == 2005 && end == 2005) {
     message("Can't collect 2004-2005. No season due to lockout. Not collecting any data.")
@@ -109,7 +111,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
   }
 
   message("Scraping NHL games")
-  if (start != end)
+  if (progress && start != end)
     pb <- utils::txtProgressBar(min = start, max = end, initial = start)
 
   for (i in c(start:end)) {
@@ -135,7 +137,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       }
     }
     Sys.sleep(sleep)
-    if (start != end)
+    if (progress && start != end)
       utils::setTxtProgressBar(pb, i)
   }
   return(TRUE)

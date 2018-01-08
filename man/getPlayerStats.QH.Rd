@@ -5,12 +5,14 @@
 \title{Get stats for a list of players
 A function to get all player stats from a list of players (in the form provided by \code{\link{getPlayerList.QH}})}
 \usage{
-getPlayerStats.QH(player_list, sleep = 30)
+getPlayerStats.QH(player_list, sleep = 30, progress = TRUE)
 }
 \arguments{
 \item{player_list}{A player list (data.frame) from \code{\link{getPlayerList.QH}}}
 
 \item{sleep}{Time to sleep between player scrapings}
+
+\item{progress}{Whether to show a progress bar. Default = TRUE.}
 }
 \value{
 a list of three data.frames, containing

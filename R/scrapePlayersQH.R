@@ -98,13 +98,14 @@ flattenPlayerTables.QH <- function(tables) {
 #'
 #' @param player_list A player list (data.frame) from \code{\link{getPlayerList.QH}}
 #' @param sleep Time to sleep between player scrapings
+#' @param progress Whether to show a progress bar. Default = TRUE.
 #'
 #' @return a list of three data.frames, containing
 #' \item{PlayerStats}{Combined player statistics}
 #' \item{GoalieStats}{Combined goalie statistics}
 #' \item{PlayerMeta}{Meta statistics for all (goalies and players)}
 
-getPlayerStats.QH <- function(player_list, sleep = 30) {
+getPlayerStats.QH <- function(player_list, sleep = 30, progress=TRUE) {
   player_stats_tables <- data.frame()
   goalie_stats_tables <- data.frame()
   player_meta_tables <- data.frame()
@@ -113,7 +114,9 @@ getPlayerStats.QH <- function(player_list, sleep = 30) {
   pdrop <- NULL
   if (nrow(plist) == 0)
     return(NULL)
-  pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
+  if(progress){
+    pb <- utils::txtProgressBar(min = 0, max = nrow(plist), initial = 0)
+  }
   player <- 0
   while (player < nrow(plist)) {
     player <- player + 1
@@ -142,7 +145,9 @@ getPlayerStats.QH <- function(player_list, sleep = 30) {
       }
       player_meta_tables <- plyr::rbind.fill(player_meta_tables, data.frame(t(metas)))
     }
-    utils::setTxtProgressBar(pb, player)
+    if(progress){
+      utils::setTxtProgressBar(pb, player)
+    }
     Sys.sleep(sleep)
   }
   if (length(pdrop)>0){
