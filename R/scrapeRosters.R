@@ -13,13 +13,15 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
   "http://www.dailyfaceoff.com/teams/san-jose-sharks/line-combinations/", "http://www.dailyfaceoff.com/teams/st-louis-blues/line-combinations/",
   "http://www.dailyfaceoff.com/teams/tampa-bay-lightning/line-combinations/", "http://www.dailyfaceoff.com/teams/toronto-maple-leafs/line-combinations/",
   "http://www.dailyfaceoff.com/teams/vancouver-canucks/line-combinations/", "http://www.dailyfaceoff.com/teams/washington-capitals/line-combinations/",
-  "http://www.dailyfaceoff.com/teams/winnipeg-jets/line-combinations/", "http://www.dailyfaceoff.com/teams/vegas-golden-knights/line-combinations/"), Team = c("Anaheim Ducks", "Arizona Coyotes",
+  "http://www.dailyfaceoff.com/teams/winnipeg-jets/line-combinations/", "http://www.dailyfaceoff.com/teams/vegas-golden-knights/line-combinations/"), 
+                          Team = c("Anaheim Ducks", "Arizona Coyotes",
   "Boston Bruins", "Buffalo Sabres", "Calgary Flames", "Carolina Hurricanes", "Chicago Blackhawks",
   "Colorado Avalanche", "Columbus Blue Jackets", "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers",
   "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens", "Nashville Predators",
   "New Jersey Devils", "New York Islanders", "New York Rangers", "Ottawa Senators", "Philadelphia Flyers",
   "Pittsburgh Penguins", "San Jose Sharks", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs",
   "Vancouver Canucks", "Washington Capitals", "Winnipeg Jets", "Vegas Golden Knights"), stringsAsFactors = FALSE)
+
 
 #' Get Current estimated rosters
 #'
@@ -32,6 +34,7 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' \item{Player}{The name of the Forward, Defence or Goalie playing}
 #' \item{updateDate}{The date the Team's page was updated}
 #' @export
+
 getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TRUE) {
   rosters <- data.frame(Team = character(), Players = character(), updateDate = character())
 
