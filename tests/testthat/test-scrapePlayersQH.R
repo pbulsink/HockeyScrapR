@@ -21,7 +21,7 @@ test_that("Players are properly scraped from QH", {
     expect_type(pstats, "list")
 
     #expect_equivalent(pstats, player_mini_data)
-    expect_true(nrow(pstats$PlayerStats) == 123)
+    expect_true(ncol(pstats$PlayerStats) == 17)
     expect_true(nrow(pstats$PlayerMeta) == 8)
     f1<-paste0("./QH_allPlayers-",Sys.Date(),".RDS")
     expect_true(file.exists(f1))
