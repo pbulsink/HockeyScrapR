@@ -54,7 +54,6 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
     date_pattern <- "Last update: ([A-Za-z0-9\\., ]+)<\\/div>"
     dt <- as.character(as.Date(gsub("\\.", "", stringr::str_match(htmlpage, date_pattern)[1, 2]),
       format = "%b%t%e,%t%Y"))
-    player_pattern<-"\\$[0-9]+([A-Za-z\\s]+)$"
     r <- data.frame(Team = rep(teamUrlList[i, 2]),
                     Players = c(stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
                                 stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
@@ -62,6 +61,7 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
                     updateDate = rep(dt),
       stringsAsFactors = FALSE)
     rosters <- rbind(rosters, r)
+    player_pattern<-"<span class=\\\"player-name\\\">([A-Za-z\\-\\.\\s]+)</span>"
     Sys.sleep(sleep)
     if(progress){
       pb$tick()
