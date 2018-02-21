@@ -29,14 +29,18 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' @param teamUrlList A list of team roster page urls on dailyfaceoff.com. Defaults to correct team URLs.
 #' @param progress Whether to show a progress bar. Default = TRUE.
 #'
-#' @return a long data frame with three columns:
-#' \item{Team}{The team}
-#' \item{Player}{The name of the Forward, Defence or Goalie playing}
+#' @return a list of vectors by team, with each team's list named:
+#' \item{Forwards}{The names of the Forwards playing}
+#' \item{Defence}{The names of the Defence playing}
+#' \item{Goalies}{The names of the Goalies playing}
+#' \item{PP1}{The first powerplay unit}
+#' \item{PP2}{The second powerplay unit}
+#' \item{Injuries}{Any players on the injury reserve}
 #' \item{updateDate}{The date the Team's page was updated}
 #' @export
 
 getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TRUE) {
-  rosters <- data.frame(Team = character(), Players = character(), updateDate = character())
+  rosters <- list()
 
   if(progress){
     pb <- progress::progress_bar$new(
@@ -54,22 +58,24 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
     date_pattern <- "Last update: ([A-Za-z0-9\\., ]+)<\\/div>"
     dt <- as.character(as.Date(gsub("\\.", "", stringr::str_match(htmlpage, date_pattern)[1, 2]),
       format = "%b%t%e,%t%Y"))
-    r <- data.frame(Team = rep(teamUrlList[i, 2]),
-                    Players = c(stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
-                                stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
-                                stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2]),
-                    updateDate = rep(dt),
-      stringsAsFactors = FALSE)
-    rosters <- rbind(rosters, r)
     player_pattern<-"<span class=\\\"player-name\\\">([A-Za-z\\-\\.\\s]+)</span>"
+    r <- list(Forwards = stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
+              Defence = stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
+              Goalies = stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2],
+              PP1 = c(stringr::str_match(unlist(tabs[3]), player_pattern)[,2],
+                      stringr::str_match(unlist(tabs[4]), player_pattern)[,2]),
+              PP2 = c(stringr::str_match(unlist(tabs[5]), player_pattern)[,2],
+                      stringr::str_match(unlist(tabs[6]), player_pattern)[,2]),
+              Injuries = stringr::str_match(unlist(tabs[8]), player_pattern)[,2],
+              updateDate = as.Date(dt))
+    rosters <- c(rosters, r)
+    names(rosters)[length(rosters)]<-teamUrlList[i, 2]
     Sys.sleep(sleep)
     if(progress){
       pb$tick()
     }
   }
 
-  rosters$Team <- factor(rosters$Team)
-  rosters$updateDate <- as.Date(rosters$updateDate)
   return(rosters)
 }
 
