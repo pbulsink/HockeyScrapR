@@ -13,14 +13,9 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
   "http://www.dailyfaceoff.com/teams/san-jose-sharks/line-combinations/", "http://www.dailyfaceoff.com/teams/st-louis-blues/line-combinations/",
   "http://www.dailyfaceoff.com/teams/tampa-bay-lightning/line-combinations/", "http://www.dailyfaceoff.com/teams/toronto-maple-leafs/line-combinations/",
   "http://www.dailyfaceoff.com/teams/vancouver-canucks/line-combinations/", "http://www.dailyfaceoff.com/teams/washington-capitals/line-combinations/",
-  "http://www.dailyfaceoff.com/teams/winnipeg-jets/line-combinations/", "http://www.dailyfaceoff.com/teams/vegas-golden-knights/line-combinations/"), 
-                          Team = c("Anaheim Ducks", "Arizona Coyotes",
-  "Boston Bruins", "Buffalo Sabres", "Calgary Flames", "Carolina Hurricanes", "Chicago Blackhawks",
-  "Colorado Avalanche", "Columbus Blue Jackets", "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers",
-  "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens", "Nashville Predators",
-  "New Jersey Devils", "New York Islanders", "New York Rangers", "Ottawa Senators", "Philadelphia Flyers",
-  "Pittsburgh Penguins", "San Jose Sharks", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs",
-  "Vancouver Canucks", "Washington Capitals", "Winnipeg Jets", "Vegas Golden Knights"), stringsAsFactors = FALSE)
+  "http://www.dailyfaceoff.com/teams/winnipeg-jets/line-combinations/", "http://www.dailyfaceoff.com/teams/vegas-golden-knights/line-combinations/"),
+                          Team = c("ANA", "ARI", "BOS", "BUF", "CGY", "CAR", "CHI", "COL", "CBJ", "DAL", "DET", "EDM",
+  "FLA", "LAK", "MIN", "MTL", "NSH","NJD", "NYI", "NYR", "OTT", "PHI", "PIT", "SJS", "STL", "TBL", "TOR", "VAN", "WSH", "WPG", "VGK"), stringsAsFactors = FALSE)
 
 
 #' Get Current estimated rosters
@@ -40,7 +35,7 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' @export
 
 getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TRUE) {
-  rosters <- list()
+  rosters <- data.frame(UpdateDate=character(), Team=character(), Forwards=character(), Defence = character(), Goalies = character(), PP1 = character(), PP2 = character(), Injuries = character())
 
   if(progress){
     pb <- progress::progress_bar$new(
@@ -52,6 +47,10 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
     pb$tick(0)
   }
 
+  nteams<-nrow(teamUrlList)
+  rosters<-vector(mode = 'list', length=nteams)
+  names(rosters)<-teamURLList[,2]
+
   for (i in 1:nrow(teamUrlList)) {
     htmlpage <- getURLInternal(teamUrlList[i, 1], referer = "http://www.dailyfaceoff.com/")
     tabs <- XML::readHTMLTable(htmlpage, header = FALSE, stringsAsFactors=FALSE)
@@ -59,23 +58,21 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
     dt <- as.character(as.Date(gsub("\\.", "", stringr::str_match(htmlpage, date_pattern)[1, 2]),
       format = "%b%t%e,%t%Y"))
     player_pattern<-"<span class=\\\"player-name\\\">([A-Za-z\\-\\.\\s]+)</span>"
-    r <- list(Forwards = stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
-              Defence = stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
-              Goalies = stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2],
-              PP1 = c(stringr::str_match(unlist(tabs[3]), player_pattern)[,2],
-                      stringr::str_match(unlist(tabs[4]), player_pattern)[,2]),
-              PP2 = c(stringr::str_match(unlist(tabs[5]), player_pattern)[,2],
-                      stringr::str_match(unlist(tabs[6]), player_pattern)[,2]),
-              Injuries = stringr::str_match(unlist(tabs[8]), player_pattern)[,2],
-              updateDate = as.Date(dt))
-    rosters <- c(rosters, r)
-    names(rosters)[length(rosters)]<-teamUrlList[i, 2]
+    rosters[i] <- list(Forwards = stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
+                       Defence = stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
+                       Goalies = stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2],
+                       PP1 = c(stringr::str_match(unlist(tabs[3]), player_pattern)[,2],
+                               stringr::str_match(unlist(tabs[4]), player_pattern)[,2]),
+                       PP2 = c(stringr::str_match(unlist(tabs[5]), player_pattern)[,2],
+                               stringr::str_match(unlist(tabs[6]), player_pattern)[,2]),
+                       Injuries = stringr::str_match(unlist(tabs[8]), player_pattern)[,2],
+                       UpdateDate = as.Date(dt))
+
     Sys.sleep(sleep)
     if(progress){
       pb$tick()
     }
   }
-
   return(rosters)
 }
 
