@@ -35,8 +35,6 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' @export
 
 getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TRUE) {
-  rosters <- data.frame(UpdateDate=character(), Team=character(), Forwards=character(), Defence = character(), Goalies = character(), PP1 = character(), PP2 = character(), Injuries = character())
-
   if(progress){
     pb <- progress::progress_bar$new(
       format = "  downloading rosters [:bar] :percent eta: :eta",
