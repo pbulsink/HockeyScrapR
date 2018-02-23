@@ -47,24 +47,36 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
 
   nteams<-nrow(teamUrlList)
   rosters<-vector(mode = 'list', length=nteams)
-  names(rosters)<-teamURLList[,2]
+  names(rosters)<-teamUrlList[,2]
+  date_pattern <- "Last update: ([A-Za-z0-9\\., ]+)<\\/div>"
+  #Note: includes special characters
+  player_pattern<-"\\$[0-9]+([A-z\u00c0-\u00ff\\s.\\-]+)$"
 
   for (i in 1:nrow(teamUrlList)) {
     htmlpage <- getURLInternal(teamUrlList[i, 1], referer = "http://www.dailyfaceoff.com/")
     tabs <- XML::readHTMLTable(htmlpage, header = FALSE, stringsAsFactors=FALSE)
-    date_pattern <- "Last update: ([A-Za-z0-9\\., ]+)<\\/div>"
+
     dt <- as.character(as.Date(gsub("\\.", "", stringr::str_match(htmlpage, date_pattern)[1, 2]),
       format = "%b%t%e,%t%Y"))
-    player_pattern<-"<span class=\\\"player-name\\\">([A-Za-z\\-\\.\\s]+)</span>"
-    rosters[i] <- list(Forwards = stringr::str_match(unlist(tabs$forwards), player_pattern)[,2],
-                       Defence = stringr::str_match(unlist(tabs$defense), player_pattern)[,2],
-                       Goalies = stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2],
-                       PP1 = c(stringr::str_match(unlist(tabs[3]), player_pattern)[,2],
-                               stringr::str_match(unlist(tabs[4]), player_pattern)[,2]),
-                       PP2 = c(stringr::str_match(unlist(tabs[5]), player_pattern)[,2],
-                               stringr::str_match(unlist(tabs[6]), player_pattern)[,2]),
-                       Injuries = stringr::str_match(unlist(tabs[8]), player_pattern)[,2],
-                       UpdateDate = as.Date(dt))
+    f <- stringr::str_match(unlist(tabs$forwards), player_pattern)[,2]
+    d <- stringr::str_match(unlist(tabs$defense), player_pattern)[,2]
+    g <- stringr::str_match(unlist(tabs$goalie_list), player_pattern)[,2]
+    p1 <- c(stringr::str_match(unlist(tabs[3]), player_pattern)[,2], stringr::str_match(unlist(tabs[4]), player_pattern)[,2])
+    p2 <- c(stringr::str_match(unlist(tabs[5]), player_pattern)[,2], stringr::str_match(unlist(tabs[6]), player_pattern)[,2])
+    ij <- stringr::str_match(unlist(tabs[8]), player_pattern)[,2]
+    #Making sure no NA make it to the rosters.
+    f <- f[!is.na(f)]
+    d <- d[!is.na(d)]
+    g <- g[!is.na(g)]
+    p1 <- p1[!is.na(p1)]
+    p2 <- p2[!is.na(p2)]
+    ij <- ij[!is.na(ij)]
+    if(length(ij) == 0){
+      ij<-""
+    }
+
+    rosters[[i]] <- list(Forwards = f, Defence = d, Goalies = g, PP1 = p1,
+                       PP2 = p2, Injuries = ij, UpdateDate = as.Date(dt))
 
     Sys.sleep(sleep)
     if(progress){
@@ -81,9 +93,9 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
 #' Also saves results to a dated .RDS file.
 #'
 #' @param data_dir Directory to store data in
-#' @param ... Additional parameters to pass
+#' @param ... Additional parameters to pass to getCurrentRosters
 #'
-#' @return roster information data.frame
+#' @return roster information list
 #' @export
 #'
 #' @examples
@@ -92,6 +104,9 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
 #' }
 scrapeRosters <- function(data_dir = "./data/rosters/", ...) {
   rosters <- getCurrentRosters(...)
+  if(!dir.exists(data_dir)){
+    dir.create(data_dir, recursive = TRUE)
+  }
   saveRDS(rosters, paste0(data_dir, "rosters-", Sys.Date(), ".RDS"))
   return(rosters)
 }
