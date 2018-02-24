@@ -9,10 +9,10 @@ scrapeRosters(data_dir = "./data/rosters/", ...)
 \arguments{
 \item{data_dir}{Directory to store data in}
 
-\item{...}{Additional parameters to pass}
+\item{...}{Additional parameters to pass to getCurrentRosters}
 }
 \value{
-roster information data.frame
+roster information list
 }
 \description{
 This is a one-command function to scrape all roster data available from DailyFaceoff.com.

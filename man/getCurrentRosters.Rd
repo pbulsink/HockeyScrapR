@@ -14,9 +14,13 @@ getCurrentRosters(sleep = 30, teamUrlList = teamURLList, progress = TRUE)
 \item{progress}{Whether to show a progress bar. Default = TRUE.}
 }
 \value{
-a long data frame with three columns:
-\item{Team}{The team}
-\item{Player}{The name of the Forward, Defence or Goalie playing}
+a list of vectors by team, with each team's list named:
+\item{Forwards}{The names of the Forwards playing}
+\item{Defence}{The names of the Defence playing}
+\item{Goalies}{The names of the Goalies playing}
+\item{PP1}{The first powerplay unit}
+\item{PP2}{The second powerplay unit}
+\item{Injuries}{Any players on the injury reserve}
 \item{updateDate}{The date the Team's page was updated}
 }
 \description{
