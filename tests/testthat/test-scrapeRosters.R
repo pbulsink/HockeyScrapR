@@ -2,9 +2,7 @@ context("Test URL scraping works.")
 source("helper-scrapeRosters.R")
 
 test_that("Getting and parsing rosters URL page works", {
-    teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-ducks/line-combinations/"),
-        Team = c("ANA"), stringsAsFactors = FALSE)
-    roster <- getCurrentRosters(sleep = 0, teamUrlList = teamURLList, progress = FALSE)
+    roster <- getCurrentRosters(sleep = 0, team = 'ANA', progress = FALSE)
 
     expect_named(roster, "ANA")
     expect_named(roster$ANA, c("Forwards", "Defence", "Goalies", "PP1", "PP2", "Injuries", "UpdateDate"))
@@ -16,9 +14,7 @@ test_that("Getting and parsing rosters URL page works", {
 })
 
 test_that("Scraping Rosters Works", {
-    teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-ducks/line-combinations/"),
-        Team = c("ANA"), stringsAsFactors = FALSE)
-    roster <- scrapeRosters(data_dir = "./", sleep = 0, teamUrlList = teamURLList, progress=FALSE)
+    roster <- scrapeRosters(data_dir = "./", sleep = 0, team = 'ANA', progress=FALSE)
 
     #team name should be list key
     expect_named(roster, "ANA")
