@@ -18,7 +18,9 @@ install.packages('devtools')
 devtools::install_github(pbulsink/HockeyScrapR)
 ```
 
+More information on how to use this package can be found in the vignette. You can read it [here](https://github.com/pbulsink/HockeyScrapR/blob/master/vignettes/HockeyScrapR.md)
+
 Additional tools and functions will be provided as they're prepared. Please feel free to chip in! 
 
-Current version: 0.2.0
+Current version: 0.2.1
 
