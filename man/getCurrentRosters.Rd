@@ -4,12 +4,12 @@
 \alias{getCurrentRosters}
 \title{Get Current estimated rosters}
 \usage{
-getCurrentRosters(sleep = 30, teamUrlList = teamURLList, progress = TRUE)
+getCurrentRosters(sleep = 30, teams = NULL, progress = TRUE)
 }
 \arguments{
 \item{sleep}{The amount of time to sleep between requests}
 
-\item{teamUrlList}{A list of team roster page urls on dailyfaceoff.com. Defaults to correct team URLs.}
+\item{teams}{A list of teams to scrape. Defaults to all (as NULL)}
 
 \item{progress}{Whether to show a progress bar. Default = TRUE.}
 }
