@@ -21,7 +21,7 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' Get Current estimated rosters
 #'
 #' @param sleep The amount of time to sleep between requests
-#' @param teamUrlList A list of team roster page urls on dailyfaceoff.com. Defaults to correct team URLs.
+#' @param teams A list of teams to scrape. Defaults to all (as NULL)
 #' @param progress Whether to show a progress bar. Default = TRUE.
 #'
 #' @return a list of vectors by team, with each team's list named:
@@ -33,27 +33,37 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' \item{Injuries}{Any players on the injury reserve}
 #' \item{updateDate}{The date the Team's page was updated}
 #' @export
+getCurrentRosters <- function(sleep = 30, teams = NULL, progress=TRUE) {
+  if(!is.null(teams)){
+    if(sum(!teams %in% teamURLList$Team) != 0){
+      stop(paste("Only select teams that are in the following list:", teamURLList$Team, collapse = ' '))
+    }
+    teamURLs <- teamURLList[teamURLList$Team %in% teams, ]
+  } else {
+    teamURLs <- teamURLList
+  }
 
-getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TRUE) {
   if(progress){
     pb <- progress::progress_bar$new(
       format = "  downloading rosters [:bar] :percent eta: :eta",
       clear = FALSE,
       width = 80,
-      total=nrow(teamUrlList)
+      total=nrow(teamURLs)
     )
     pb$tick(0)
   }
 
-  nteams<-nrow(teamUrlList)
+  rosters <- data.frame(Team = character(), Players = character(), updateDate = character())
+
+  nteams<-nrow(teamURLs)
   rosters<-vector(mode = 'list', length=nteams)
-  names(rosters)<-teamUrlList[,2]
+  names(rosters)<-teamURLs[,2]
   date_pattern <- "Last update: ([A-Za-z0-9\\., ]+)<\\/div>"
   #Note: includes special characters
   player_pattern<-"\\$[0-9]+([A-z\u00c0-\u00ff\\s.\\-]+)$"
 
-  for (i in 1:nrow(teamUrlList)) {
-    htmlpage <- getURLInternal(teamUrlList[i, 1], referer = "http://www.dailyfaceoff.com/")
+  for (i in 1:nrow(teamURLs)) {
+    htmlpage <- getURLInternal(teamURLs[i, 1], referer = "http://www.dailyfaceoff.com/")
     tabs <- XML::readHTMLTable(htmlpage, header = FALSE, stringsAsFactors=FALSE)
 
     dt <- as.character(as.Date(gsub("\\.", "", stringr::str_match(htmlpage, date_pattern)[1, 2]),
@@ -82,6 +92,9 @@ getCurrentRosters <- function(sleep = 30, teamUrlList = teamURLList, progress=TR
     if(progress){
       pb$tick()
     }
+  }
+  if(progress){
+    pb$update(1)
   }
   return(rosters)
 }
