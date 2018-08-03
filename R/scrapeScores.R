@@ -460,3 +460,106 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
 
 }
 
+scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
+  if(is.null(scores)){
+    scores<-scrapeScores(data_dir = data_dir)
+  }
+  scores<-scores[scores$Date > as.Date('2008-09-01'),]
+
+  scores$HomeAllCF <- NA
+  scores$HomeCloseCF <- NA
+  scores$HomeEvenCF <- NA
+  scores$HomeHits <- NA
+  scores$HomeBlocks <- NA
+
+  scores$AwayAllCF <- NA
+  scores$AwayCloseCF <- NA
+  scores$AwayEvenCF <- NA
+  scores$AwayHits <- NA
+  scores$AwayBlocks <- NA
+
+  pb <- utils::txtProgressBar(0, nrow(scores), style = 3)
+  for(i in 1:nrow(scores)){
+    home <- as.character(scores$HomeTeam[[i]])
+    home <- getHome(home, scores$Date[[i]])
+    away <- as.character(scores$AwayTeam[[i]])
+    away <- getHome(away, scores$Date[[i]])
+    dated <- format(scores$Date[[i]], "%Y%m%d")
+    url<-paste0("https://www.hockey-reference.com/boxscores/",dated,"0",home,".html")
+    htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
+    htmlpage <- uncommentHTML(htmlpage)
+    if (class(htmlpage) == "try-error") {
+      tables <- NULL
+    } else {
+      htmlpage <- uncommentHTML(htmlpage)
+      tables <- XML::readHTMLTable(htmlpage, stringsAsFactors = FALSE)
+    }
+    if (!is.null(tables)) {
+      ## In case of download error, don't process
+      message(home, away, dated)
+      home_adv <- tables[names(tables) %in% paste0(home, "_adv")][[1]]
+      away_adv <- tables[names(tables) %in% paste0(away, "_adv")][[1]]
+      # ALL5v5, Cl5v5, ALLAll, CLAll, ALLEV, CLEV, ALLPP, CLPP, ALLSH, CLSH
+      scores$HomeAllCF[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$HomeCloseCF[[i]] <- sum(as.numeric(home_adv[seq(from=4, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$HomeEvenCF[[i]] <- sum(as.numeric(home_adv[seq(from=5, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$HomeHits[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'HIT']), na.rm = TRUE)
+      scores$HomeBlocks[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'BLK']), na.rm = TRUE)
+
+      scores$AwayAllCF[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$AwayCloseCF[[i]] <- sum(as.numeric(away_adv[seq(from=4, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$AwayEvenCF[[i]] <- sum(as.numeric(away_adv[seq(from=5, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+      scores$AwayHits[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'HIT']), na.rm = TRUE)
+      scores$AwayBlocks[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'BLK']), na.rm = TRUE)
+
+    } else {
+      message(url)
+    }
+    Sys.sleep(sleep)
+    utils::setTxtProgressBar(pb, i)
+  }
+
+  return(scores)
+
+}
+
+getHome <- function(home, d) {
+  lookup <- list('Toronto Maple Leafs' = 'TOR',
+                 'Montreal Canadiens' = 'MTL',
+                 'Boston Bruins' = 'BOS',
+                 'New York Rangers' = 'NYR',
+                 'Chicago Blackhawks' = 'CHI',
+                 'Detroit Red Wings' = 'DET',
+                 'Pittsburgh Penguins' = 'PIT',
+                 'St. Louis Blues' = 'STL',
+                 'Los Angeles Kings' = 'LAK',
+                 'Philadelphia Flyers' = 'PHI',
+                 'Dallas Stars' = 'DAL',
+                 'Vancouver Canucks' = 'VAN',
+                 'Buffalo Sabres' = 'BUF',
+                 'New York Islanders' = 'NYI',
+                 'Carolina Hurricanes' = 'CAR',
+                 'Colorado Avalanche' = 'COL',
+                 'Calgary Flames' = 'CGY',
+                 'Arizona Coyotes' = 'ARI',
+                 'Edmonton Oilers' = 'EDM',
+                 'Washington Capitals' = 'WSH',
+                 'New Jersy Devils' = 'NJD',
+                 'San Jose Sharks' = 'SJS',
+                 'Tampa Bay Lightning' = 'TBL',
+                 'Ottawa Senators' = 'OTT',
+                 'Anaheim Ducks' = 'ANA',
+                 'Florida Panthers' = 'FLA',
+                 'Nashville Predators' = 'NSH',
+                 'Winnipeg Jets' = 'WPG',
+                 'Columbus Blue Jackets' = 'CBJ',
+                 'Minnesota Wild' = 'MIN',
+                 'Vegas Golden Knights' = 'VEG')
+  h <- lookup[home]
+  if (d < as.Date('2014-08-01') & h == 'ARI'){
+    h <- 'PHX'
+  } else if (d < as.Date('2011-08-01') & h == 'WPG'){
+    h <- 'ATL'
+  }
+  return(h)
+}

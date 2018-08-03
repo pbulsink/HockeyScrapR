@@ -9,7 +9,7 @@ test_that("Getting and parsing rosters URL page works", {
     expect_named(roster, "ANA")
     expect_named(roster$ANA, c("Forwards", "Defence", "Goalies", "PP1", "PP2", "Injuries", "UpdateDate"))
     # Teams can dress up to 23 active players in a game
-    expect_less_than(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 24)
+    expect_lt(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 24)
     # Teams have 2 power play lines of 5 each
     expect_length(roster$ANA$PP1, 5)
     expect_length(roster$ANA$PP2, 5)
@@ -25,7 +25,7 @@ test_that("Scraping Rosters Works", {
     #All sublists should exist even if no data (ie no one on IR)
     expect_named(roster$ANA, c("Forwards", "Defence", "Goalies", "PP1", "PP2", "Injuries", "UpdateDate"))
     # Teams can dress up to 23 active players in a game
-    expect_less_than(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 24)
+    expect_lt(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 24)
     # Teams have 2 power play lines of 5 each
     expect_length(roster$ANA$PP1, 5)
     expect_length(roster$ANA$PP2, 5)

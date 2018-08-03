@@ -188,7 +188,7 @@ test_that("Schedule returns full cleaned season", {
     expect_true(file.exists(f1))
     try_delete(f1)
 
-    expect_equal(nrow(scraped_schedule), 1270)
+    expect_equal(nrow(scraped_schedule), 1271)
     expect_equal(unique(scraped_schedule$G), "")
     expect_equal(unique(scraped_schedule$G.1), "")
     expect_equal(unique(scraped_schedule$X), "")
