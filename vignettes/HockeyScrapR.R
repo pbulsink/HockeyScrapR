@@ -13,11 +13,7 @@ knitr::opts_chunk$set(
 library(HockeyScrapR)
 
 ## ----getrosters----------------------------------------------------------
-teamTOR <- data.frame(
-  URL = "http://www.dailyfaceoff.com/teams/toronto-maple-leafs/line-combinations/", 
-  Team="TOR", 
-  stringsAsFactors = FALSE)
-roster<-getCurrentRosters(teamUrlList = teamTOR, sleep = 0, progress = FALSE)
+roster<-getCurrentRosters(teams = 'TOR', sleep = 0, progress = FALSE)
 
 ## ----seeRosterForwards---------------------------------------------------
 roster$TOR$Forwards

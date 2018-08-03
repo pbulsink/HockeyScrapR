@@ -19,10 +19,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-#Introduction
+# Introduction
 HockeyScrapR is a collection of tools for scraping information from various sites to use in hockey analytics. 
 
-#Installation
+# Installation
 To use, start by installing the package from GitHub. If you haven't installed the `devtools` package, you'll need to do so, else you can just run the second line below.
 ```{r install, eval=FALSE}
 install.packages('devtools')
@@ -35,13 +35,13 @@ Once the package is installed, load it with the library function:
 library(HockeyScrapR)
 ```
 
-#General Usage
+# General Usage
 Many of the functions have similar usage notes. There's a few parameters that are optional, but you may wish to use in your own programming:
 - `sleep=n` is used to pause the scraping for `n` seconds. Use a sleep of 15-30 seconds to respect the websites from which you're collecting data. A sleep of 0 is fine if you're collecting only one object, but may appear as abusive to the website if you're scraping a whole collection of data. You could be temporarally blocked or banned if you scrape too hard.
 - `progress=TRUE` progress bars can provide good information if you're using an interactive session, but can clutter up automated data collection. Progress bars are by default on, but turn them off by calling `progress=FALSE`. 
 - `data_dir` is the directory you wish to save any data collected in. Not all functions save data, but those that do have a default. You can change this if you want to store your data other than in a `data` subfolder of the working directory. 
 
-#Daily Rosters
+# Daily Rosters
 The rosters for teams change almost daily, depending on coaching decisions, injuries, trades, suspensions, and how well players are performing. You may wish to have a whole list of who is playing on each team, including their power play units, and injury list.
 
 I'm interested just in just the rosters from one team, Toronto, but you would normally collect the whole league at once. 
@@ -82,7 +82,8 @@ The same information can be collected and returned, and a file saved for future 
 roster<-scrapeRosters(data_dir = "./data/rosters/", teamUrlList = teamTOR, sleep = 0, progress = FALSE)
 ```
 
-#Past Scores and Upcoming Schedule
+# Past Scores and Upcoming Schedule
 
-#Player Stats
+
+# Player Stats
 
