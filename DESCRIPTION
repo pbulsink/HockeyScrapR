@@ -14,7 +14,8 @@ Imports:
     XML,
     progress,
     utils,
-    devtools
+    devtools,
+    dplyr
 Suggests:
     testthat,
     knitr,
