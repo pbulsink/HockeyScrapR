@@ -14,12 +14,13 @@ Imports:
     XML,
     progress,
     utils,
-    devtools
+    devtools,
+    lubridate
 Suggests:
     testthat,
     knitr,
     rmarkdown
 Depends:
   R (>= 2.10)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 VignetteBuilder: knitr

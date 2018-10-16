@@ -5,8 +5,8 @@
 \title{Clean the CSV imported hockey data}
 \usage{
 cleanHockeyData(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
-  listWinnersLosers = TRUE, removeInternational = TRUE, eloResults = TRUE,
-  ...)
+  listWinnersLosers = TRUE, removeInternational = TRUE,
+  eloResults = TRUE, ...)
 }
 \arguments{
 \item{hockey_data}{the combined CSV data}

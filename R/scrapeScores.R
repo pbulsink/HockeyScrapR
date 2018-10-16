@@ -460,25 +460,54 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
 
 }
 
+#' Scrape Advanced Stats
+#'
+#' @param scores historical scores to pair to advanced stats
+#' @param data_dir where to store checkpoint data
+#' @param sleep number of seconds between scrapes
+#'
+#' @return a larger data frame.
+#' @export
 scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
   if(is.null(scores)){
     scores<-scrapeScores(data_dir = data_dir)
   }
+  if (!dir.exists(data_dir)){
+    dir.create(data_dir, recursive = TRUE)
+  }
   scores<-scores[scores$Date > as.Date('2008-09-01'),]
+  scores<-scores[scores$Date < Sys.Date(),]
 
   scores$HomeAllCF <- NA
   scores$HomeCloseCF <- NA
   scores$HomeEvenCF <- NA
   scores$HomeHits <- NA
   scores$HomeBlocks <- NA
+  scores$HomeShots <- NA
+  scores$HomePIM <- NA
+  scores$HomeEV <- NA
+  scores$HomePP <- NA
+  scores$HomeSH <- NA
+  scores$HomeSaves <- NA
+  scores$HomeShifts <- NA
+  scores$HomeTOI <- NA
 
   scores$AwayAllCF <- NA
   scores$AwayCloseCF <- NA
   scores$AwayEvenCF <- NA
   scores$AwayHits <- NA
   scores$AwayBlocks <- NA
+  scores$AwayShots <- NA
+  scores$AwayPIM <- NA
+  scores$AwayEV <- NA
+  scores$AwayPP <- NA
+  scores$AwaySH <- NA
+  scores$AwaySaves <- NA
+  scores$AwayShifts <- NA
+  scores$AwayTOI <- NA
 
   pb <- utils::txtProgressBar(0, nrow(scores), style = 3)
+  errorscount<-0
   for(i in 1:nrow(scores)){
     home <- as.character(scores$HomeTeam[[i]])
     home <- getHome(home, scores$Date[[i]])
@@ -496,29 +525,79 @@ scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
     }
     if (!is.null(tables)) {
       ## In case of download error, don't process
-      message(home, away, dated)
-      home_adv <- tables[names(tables) %in% paste0(home, "_adv")][[1]]
-      away_adv <- tables[names(tables) %in% paste0(away, "_adv")][[1]]
+      tryCatch(home_adv <- tables[names(tables) %in% paste0(home, "_adv")][[1]],
+               error = function(e) {message('Error: ',e,' Home_adv ', home); errorscount<-errorscount+1; home_adv<-NULL})
+      tryCatch(home_skaters <- tables[names(tables) %in% paste0(home, "_skaters")][[1]],
+               error = function(e) {message('Error: ',e,' Home_skaters ', home); errorscount<-errorscount+1; home_skaters<-NULL})
+      tryCatch(home_goalies <- tables[names(tables) %in% paste0(home, "_goalies")][[1]],
+               error = function(e) {message('Error: ',e,' Home_goalies ', home); errorscount<-errorscount+1; home_goalies<-NULL})
+      tryCatch(away_adv <- tables[names(tables) %in% paste0(away, "_adv")][[1]],
+               error = function(e) {message('Error: ',e,' Away_adv ', away); errorscount<-errorscount+1; away_adv<-NULL})
+      tryCatch(away_skaters <- tables[names(tables) %in% paste0(away, "_skaters")][[1]],
+               error = function(e) {message('Error: ',e,' Away_skaters ', away); errorscount<-errorscount+1; away_skaters<-NULL})
+      tryCatch(away_goalies <- tables[names(tables) %in% paste0(away, "_goalies")][[1]],
+               error = function(e) {message('Error: ',e,' Away_goalies ', away); errorscount<-errorscount+1; away_goalies<-NULL})
       # ALL5v5, Cl5v5, ALLAll, CLAll, ALLEV, CLEV, ALLPP, CLPP, ALLSH, CLSH
-      scores$HomeAllCF[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$HomeCloseCF[[i]] <- sum(as.numeric(home_adv[seq(from=4, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$HomeEvenCF[[i]] <- sum(as.numeric(home_adv[seq(from=5, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$HomeHits[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'HIT']), na.rm = TRUE)
-      scores$HomeBlocks[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'BLK']), na.rm = TRUE)
 
-      scores$AwayAllCF[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$AwayCloseCF[[i]] <- sum(as.numeric(away_adv[seq(from=4, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$AwayEvenCF[[i]] <- sum(as.numeric(away_adv[seq(from=5, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
-      scores$AwayHits[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'HIT']), na.rm = TRUE)
-      scores$AwayBlocks[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'BLK']), na.rm = TRUE)
+      if(!is.null(home_adv)){
+        scores$HomeAllCF[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeCloseCF[[i]] <- sum(as.numeric(home_adv[seq(from=4, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeEvenCF[[i]] <- sum(as.numeric(home_adv[seq(from=5, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeHits[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'HIT']), na.rm = TRUE)
+        scores$HomeBlocks[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'BLK']), na.rm = TRUE)
+      }
+      if(!is.null(home_skaters)){
+        scores$HomeShots[[i]] <- sum(as.numeric(home_skaters$S), na.rm = TRUE)
+        scores$HomePIM[[i]] <- sum(as.numeric(home_skaters$PIM), na.rm = TRUE)
+        scores$HomeEV[[i]] <- sum(as.numeric(home_skaters$EV), na.rm = TRUE)
+        scores$HomePP[[i]] <- sum(as.numeric(home_skaters$PP), na.rm = TRUE)
+        scores$HomeSH[[i]] <- sum(as.numeric(home_skaters$SH), na.rm = TRUE)
+        scores$HomeShifts[[i]] <- sum(as.numeric(home_skaters$SHFT), na.rm = TRUE)
+        scores$HomeTOI[[i]] <- sum(lubridate::seconds(lubridate::ms(home_skaters$TOI)))
+      }
+      if(!is.null(home_goalies)){
+        scores$HomeSaves[[i]] <- sum(as.numeric(home_goalies$SV), na.rm = TRUE)
+        scores$HomePIM[[i]] <- sum(c(scores$HomePIM[[i]], sum(as.numeric(home_goalies$PIM), na.rm = TRUE)), na.rm = TRUE)
+      }
+      if(!is.null(away_adv)){
+        scores$AwayAllCF[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayCloseCF[[i]] <- sum(as.numeric(away_adv[seq(from=4, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayEvenCF[[i]] <- sum(as.numeric(away_adv[seq(from=5, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayHits[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'HIT']), na.rm = TRUE)
+        scores$AwayBlocks[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'BLK']), na.rm = TRUE)
+      }
+      if(!is.null(away_skaters)){
+        scores$AwayShots[[i]] <- sum(as.numeric(away_skaters$S), na.rm = TRUE)
+        scores$AwayPIM[[i]] <- sum(as.numeric(away_skaters$PIM), na.rm = TRUE)
+        scores$AwayEV[[i]] <- sum(as.numeric(away_skaters$EV), na.rm = TRUE)
+        scores$AwayPP[[i]] <- sum(as.numeric(away_skaters$PP), na.rm = TRUE)
+        scores$AwaySH[[i]] <- sum(as.numeric(away_skaters$SH), na.rm = TRUE)
+        scores$AwayShifts[[i]] <- sum(as.numeric(away_skaters$SHFT), na.rm = TRUE)
+        scores$AwayTOI[[i]] <- sum(lubridate::seconds(lubridate::ms(away_skaters$TOI)))
+      }
+      if(!is.null(away_goalies)){
+        scores$AwaySaves[[i]] <- sum(as.numeric(away_goalies$SV), na.rm = TRUE)
+        scores$AwayPIM[[i]] <- sum(c(scores$AwayPIM[[i]], sum(as.numeric(away_goalies$PIM), na.rm = TRUE)), na.rm = TRUE)
+      }
 
+      scores[i,][is.na(scores[i,])]<-0  #replaces NA values with 0. For most count values, this is fine.
     } else {
       message(url)
+      message(home, away, dated)
     }
+
+    if(i%%1000 == 0){
+      saveRDS(scores, file = file.path(data_dir, paste0('scores',i,'2.RDS')))
+      errorscount<-0
+    }
+
+    if(errorscount == 30) break
+
     Sys.sleep(sleep)
     utils::setTxtProgressBar(pb, i)
   }
 
+  saveRDS(scores, file = file.path(data_dir, 'scoresComplete2.RDS'))
   return(scores)
 
 }
@@ -544,7 +623,7 @@ getHome <- function(home, d) {
                  'Arizona Coyotes' = 'ARI',
                  'Edmonton Oilers' = 'EDM',
                  'Washington Capitals' = 'WSH',
-                 'New Jersy Devils' = 'NJD',
+                 'New Jersey Devils' = 'NJD',
                  'San Jose Sharks' = 'SJS',
                  'Tampa Bay Lightning' = 'TBL',
                  'Ottawa Senators' = 'OTT',

@@ -7,7 +7,8 @@ A function to scrape and save player tables by last name, breaking up the scrapi
 into each chunk to prevent progress loss by scraping error (HTML error)}
 \usage{
 scrapeByAlphabet.HR(player_list, letters_to_scrape = letters,
-  long_sleep = 120, combine = TRUE, directory = "./data/players/", ...)
+  long_sleep = 120, combine = TRUE, directory = "./data/players/",
+  ...)
 }
 \arguments{
 \item{player_list}{a player list (data.frame) of the type created by \code{\link{getPlayerList.HR}}}
