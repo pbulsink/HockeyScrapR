@@ -58,5 +58,6 @@ $RECYCLE.BIN/
 tests/testthat/allPlayers.RDS
 data/*
 inst/doc
+
 tests/testthat/*.csv
 

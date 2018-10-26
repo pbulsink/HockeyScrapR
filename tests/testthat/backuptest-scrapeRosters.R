@@ -2,12 +2,16 @@ context("Test URL scraping works.")
 source("helper-scrapeRosters.R")
 
 test_that("Getting and parsing rosters URL page works", {
+
     roster <- getCurrentRosters(sleep = 0, team = 'ANA', progress = FALSE)
+
 
     expect_named(roster, "ANA")
     expect_named(roster$ANA, c("Forwards", "Defence", "Goalies", "PP1", "PP2", "Injuries", "UpdateDate"))
     # Teams can dress up to 23 active players in a game
+
     expect_lte(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 23)
+
     # Teams have 2 power play lines of 5 each
     expect_length(roster$ANA$PP1, 5)
     expect_length(roster$ANA$PP2, 5)
@@ -22,6 +26,7 @@ test_that("Scraping Rosters Works", {
     expect_named(roster$ANA, c("Forwards", "Defence", "Goalies", "PP1", "PP2", "Injuries", "UpdateDate"))
     # Teams can dress up to 23 active players in a game
     expect_lte(sum(length(roster$ANA$Forwards),length(roster$ANA$Defence), length(roster$ANA$Goalies)), 23)
+
     # Teams have 2 power play lines of 5 each
     expect_length(roster$ANA$PP1, 5)
     expect_length(roster$ANA$PP2, 5)

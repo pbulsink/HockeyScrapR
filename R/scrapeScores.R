@@ -57,8 +57,8 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
       ## In case of download error, don't process
       regular <- tables$games
       playoff <- tables$games_playoffs
-      utils::write.csv(regular, file = paste0(data_dir, "wha", i - 1, i, ".csv"))
-      utils::write.csv(playoff, file = paste0(data_dir, "wha", i - 1, i, "Playoffs.csv"))
+      utils::write.csv(regular, file = file.path(data_dir, paste0("wha", i - 1, i, ".csv")))
+      utils::write.csv(playoff, file = file.path(data_dir, paste0("wha", i - 1, i, "Playoffs.csv")))
     }
     Sys.sleep(sleep)
     if (progress && start != end) {
@@ -144,9 +144,9 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       ## In case of download error, don't process
       regular <- tables$games
       playoff <- tables$games_playoffs
-      utils::write.csv(regular, file = paste0(data_dir, "", i - 1, i, ".csv"))
+      utils::write.csv(regular, file = file.path(data_dir, paste0(i - 1, i, ".csv")))
       if (!is.null(playoff)) {
-        utils::write.csv(playoff, file = paste0(data_dir, "", i - 1, i, "Playoffs.csv"))
+        utils::write.csv(playoff, file = file.patch(data_dir, paste0(i - 1, i, "Playoffs.csv")))
       }
     }
     Sys.sleep(sleep)
@@ -208,21 +208,21 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   nhl_year_list <- nhl_year_list[nhl_year_list != 2005]
   message("reading NHL data")
   for (year in 1:length(nhl_year_list)) {
-    df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[year] -
-      1, nhl_year_list[year], ".csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+    df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[year] -
+      1, nhl_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
   }
   if (playoffs) {
     if (length(nhl_year_list) > 1) {
       for (year in 1:(length(nhl_year_list) - 1)) {
         if (nhl_year_list[year] != 1920) {
-          df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[year] -
-          1, nhl_year_list[year], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+          df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[year] -
+          1, nhl_year_list[year], "Playoffs.csv")), stringsAsFactors = FALSE)[2:7])
         }
       }
     }
     if (lastPlayoffs) {
-      df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[length(nhl_year_list)] -
-        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv", sep = ""),
+      df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[length(nhl_year_list)] -
+        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv")),
         stringsAsFactors = FALSE)[2:7])
     }
   }
@@ -232,13 +232,13 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   if (length(wha_year_list) > 0) {
     message("reading WHA data")
     for (year in 1:length(wha_year_list)) {
-      df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
-        1, wha_year_list[year], ".csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+      df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+        1, wha_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
     }
     if (playoffs) {
       for (year in 1:(length(wha_year_list))) {
-        df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
-          1, wha_year_list[year], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+        df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+          1, wha_year_list[year], "Playoffs.csv")), stringsAsFactors = FALSE)[2:7])
       }
     }
 
@@ -343,8 +343,8 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
       hockey_data$Home == "Minnesota Fighting Saints", ]$Home <- "Cleveland Crusaders",
       silent = TRUE)
 
-    hockey_data$Home <- factor(hockey_data$Home)
-    hockey_data$Visitor <- factor(hockey_data$Visitor, levels = levels(hockey_data$Home))
+    #hockey_data$Home <- factor(hockey_data$Home)
+    #hockey_data$Visitor <- factor(hockey_data$Visitor, levels = levels(hockey_data$Home))
   }
 
   if (listWinnersLosers) {
@@ -383,7 +383,7 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
   getAndSaveWHAGames(data_dir = data_dir, ...)
   getAndSaveNHLGames(data_dir = data_dir, ...)
   hockey_data <- readHockeyData(data_dir = data_dir, ...)
-  saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
+  saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
   return(hockey_data)
 }
 
@@ -408,8 +408,20 @@ updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
     getAndSaveNHLGames(data_dir = data_dir, start = getCurrentSeason(), ...)
     new_hockey_data <- readHockeyData(data_dir = data_dir, nhl_year_list = c(getCurrentSeason()),
       wha_year_list = c(), playoffs = FALSE, lastPlayoffs = FALSE)
-    hockey_data <- unique(rbind(score_data, new_hockey_data))
-    saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
+    if('HomeTeam' %in% colnames(score_data)){
+      new_hockey_data$HomeTeam<-new_hockey_data$Home
+      new_hockey_data$Home<-NULL
+    }
+    if('AwayTeam' %in% colnames(score_data)){
+      new_hockey_data$AwayTeam<-new_hockey_data$Visitor
+      new_hockey_data$Visitor<-NULL
+    }
+    if('AwayGoals' %in% colnames(score_data)){
+      new_hockey_data$AwayGoals<-new_hockey_data$VisitorGoals
+      new_hockey_data$VisitorGoals<-NULL
+    }
+    hockey_data <- unique(dplyr::bind_rows(score_data, new_hockey_data))
+    saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
   }
   return(hockey_data)
 }
@@ -428,6 +440,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   ...) {
   if (as.numeric(format(as.Date(from_date), "%Y")) > getCurrentSeason())
     return(FALSE)
+  message('Downloading schedule...')
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
   current_season <- getCurrentSeason()
@@ -440,6 +453,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
 
   tables <- XML::readHTMLTable(htmlpage, stringsAsFactors = FALSE)
 
+  message('Compiling Schedule...')
   schedule <- tables$games
   playoff <- tables$games_playoffs
 
@@ -455,8 +469,190 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   schedule$G.1 <- ""
   schedule$X <- ""
 
-  saveRDS(schedule, paste0(data_dir, "schedule.RDS"))
+  saveRDS(schedule, file.path(data_dir, "schedule.RDS"))
   return(schedule)
 
 }
 
+#' Scrape Advanced Stats
+#'
+#' @param scores historical scores to pair to advanced stats
+#' @param data_dir where to store checkpoint data
+#' @param sleep number of seconds between scrapes
+#'
+#' @return a larger data frame.
+#' @export
+scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
+  if(is.null(scores)){
+    scores<-scrapeScores(data_dir = data_dir)
+  }
+  if (!dir.exists(data_dir)){
+    dir.create(data_dir, recursive = TRUE)
+  }
+  scores<-scores[scores$Date > as.Date('2008-09-01'),]
+  scores<-scores[scores$Date < Sys.Date(),]
+
+  scores$HomeAllCF <- NA
+  scores$HomeCloseCF <- NA
+  scores$HomeEvenCF <- NA
+  scores$HomeHits <- NA
+  scores$HomeBlocks <- NA
+  scores$HomeShots <- NA
+  scores$HomePIM <- NA
+  scores$HomeEV <- NA
+  scores$HomePP <- NA
+  scores$HomeSH <- NA
+  scores$HomeSaves <- NA
+  scores$HomeShifts <- NA
+  scores$HomeTOI <- NA
+
+  scores$AwayAllCF <- NA
+  scores$AwayCloseCF <- NA
+  scores$AwayEvenCF <- NA
+  scores$AwayHits <- NA
+  scores$AwayBlocks <- NA
+  scores$AwayShots <- NA
+  scores$AwayPIM <- NA
+  scores$AwayEV <- NA
+  scores$AwayPP <- NA
+  scores$AwaySH <- NA
+  scores$AwaySaves <- NA
+  scores$AwayShifts <- NA
+  scores$AwayTOI <- NA
+
+  pb <- utils::txtProgressBar(0, nrow(scores), style = 3)
+  errorscount<-0
+  for(i in 1:nrow(scores)){
+    home <- as.character(scores$HomeTeam[[i]])
+    home <- getHome(home, scores$Date[[i]])
+    away <- as.character(scores$AwayTeam[[i]])
+    away <- getHome(away, scores$Date[[i]])
+    dated <- format(scores$Date[[i]], "%Y%m%d")
+    url<-paste0("https://www.hockey-reference.com/boxscores/",dated,"0",home,".html")
+    htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
+    htmlpage <- uncommentHTML(htmlpage)
+    if (class(htmlpage) == "try-error") {
+      tables <- NULL
+    } else {
+      htmlpage <- uncommentHTML(htmlpage)
+      tables <- XML::readHTMLTable(htmlpage, stringsAsFactors = FALSE)
+    }
+    if (!is.null(tables)) {
+      ## In case of download error, don't process
+      tryCatch(home_adv <- tables[names(tables) %in% paste0(home, "_adv")][[1]],
+               error = function(e) {message('Error: ',e,' Home_adv ', home); errorscount<-errorscount+1; home_adv<-NULL})
+      tryCatch(home_skaters <- tables[names(tables) %in% paste0(home, "_skaters")][[1]],
+               error = function(e) {message('Error: ',e,' Home_skaters ', home); errorscount<-errorscount+1; home_skaters<-NULL})
+      tryCatch(home_goalies <- tables[names(tables) %in% paste0(home, "_goalies")][[1]],
+               error = function(e) {message('Error: ',e,' Home_goalies ', home); errorscount<-errorscount+1; home_goalies<-NULL})
+      tryCatch(away_adv <- tables[names(tables) %in% paste0(away, "_adv")][[1]],
+               error = function(e) {message('Error: ',e,' Away_adv ', away); errorscount<-errorscount+1; away_adv<-NULL})
+      tryCatch(away_skaters <- tables[names(tables) %in% paste0(away, "_skaters")][[1]],
+               error = function(e) {message('Error: ',e,' Away_skaters ', away); errorscount<-errorscount+1; away_skaters<-NULL})
+      tryCatch(away_goalies <- tables[names(tables) %in% paste0(away, "_goalies")][[1]],
+               error = function(e) {message('Error: ',e,' Away_goalies ', away); errorscount<-errorscount+1; away_goalies<-NULL})
+      # ALL5v5, Cl5v5, ALLAll, CLAll, ALLEV, CLEV, ALLPP, CLPP, ALLSH, CLSH
+
+      if(!is.null(home_adv)){
+        scores$HomeAllCF[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeCloseCF[[i]] <- sum(as.numeric(home_adv[seq(from=4, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeEvenCF[[i]] <- sum(as.numeric(home_adv[seq(from=5, to=nrow(home_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$HomeHits[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'HIT']), na.rm = TRUE)
+        scores$HomeBlocks[[i]] <- sum(as.numeric(home_adv[seq(from=3, to=nrow(home_adv), by=10), 'BLK']), na.rm = TRUE)
+      }
+      if(!is.null(home_skaters)){
+        scores$HomeShots[[i]] <- sum(as.numeric(home_skaters$S), na.rm = TRUE)
+        scores$HomePIM[[i]] <- sum(as.numeric(home_skaters$PIM), na.rm = TRUE)
+        scores$HomeEV[[i]] <- sum(as.numeric(home_skaters$EV), na.rm = TRUE)
+        scores$HomePP[[i]] <- sum(as.numeric(home_skaters$PP), na.rm = TRUE)
+        scores$HomeSH[[i]] <- sum(as.numeric(home_skaters$SH), na.rm = TRUE)
+        scores$HomeShifts[[i]] <- sum(as.numeric(home_skaters$SHFT), na.rm = TRUE)
+        scores$HomeTOI[[i]] <- sum(lubridate::seconds(lubridate::ms(home_skaters$TOI)))
+      }
+      if(!is.null(home_goalies)){
+        scores$HomeSaves[[i]] <- sum(as.numeric(home_goalies$SV), na.rm = TRUE)
+        scores$HomePIM[[i]] <- sum(c(scores$HomePIM[[i]], sum(as.numeric(home_goalies$PIM), na.rm = TRUE)), na.rm = TRUE)
+      }
+      if(!is.null(away_adv)){
+        scores$AwayAllCF[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayCloseCF[[i]] <- sum(as.numeric(away_adv[seq(from=4, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayEvenCF[[i]] <- sum(as.numeric(away_adv[seq(from=5, to=nrow(away_adv), by=10), 'iCF']), na.rm = TRUE)
+        scores$AwayHits[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'HIT']), na.rm = TRUE)
+        scores$AwayBlocks[[i]] <- sum(as.numeric(away_adv[seq(from=3, to=nrow(away_adv), by=10), 'BLK']), na.rm = TRUE)
+      }
+      if(!is.null(away_skaters)){
+        scores$AwayShots[[i]] <- sum(as.numeric(away_skaters$S), na.rm = TRUE)
+        scores$AwayPIM[[i]] <- sum(as.numeric(away_skaters$PIM), na.rm = TRUE)
+        scores$AwayEV[[i]] <- sum(as.numeric(away_skaters$EV), na.rm = TRUE)
+        scores$AwayPP[[i]] <- sum(as.numeric(away_skaters$PP), na.rm = TRUE)
+        scores$AwaySH[[i]] <- sum(as.numeric(away_skaters$SH), na.rm = TRUE)
+        scores$AwayShifts[[i]] <- sum(as.numeric(away_skaters$SHFT), na.rm = TRUE)
+        scores$AwayTOI[[i]] <- sum(lubridate::seconds(lubridate::ms(away_skaters$TOI)))
+      }
+      if(!is.null(away_goalies)){
+        scores$AwaySaves[[i]] <- sum(as.numeric(away_goalies$SV), na.rm = TRUE)
+        scores$AwayPIM[[i]] <- sum(c(scores$AwayPIM[[i]], sum(as.numeric(away_goalies$PIM), na.rm = TRUE)), na.rm = TRUE)
+      }
+
+      scores[i,][is.na(scores[i,])]<-0  #replaces NA values with 0. For most count values, this is fine.
+    } else {
+      message(url)
+      message(home, away, dated)
+    }
+
+    if(i%%1000 == 0){
+      saveRDS(scores, file = file.path(data_dir, paste0('scores',i,'2.RDS')))
+      errorscount<-0
+    }
+
+    if(errorscount == 30) break
+
+    Sys.sleep(sleep)
+    utils::setTxtProgressBar(pb, i)
+  }
+
+  saveRDS(scores, file = file.path(data_dir, 'scoresComplete2.RDS'))
+  return(scores)
+
+}
+
+getHome <- function(home, d) {
+  lookup <- list('Toronto Maple Leafs' = 'TOR',
+                 'Montreal Canadiens' = 'MTL',
+                 'Boston Bruins' = 'BOS',
+                 'New York Rangers' = 'NYR',
+                 'Chicago Blackhawks' = 'CHI',
+                 'Detroit Red Wings' = 'DET',
+                 'Pittsburgh Penguins' = 'PIT',
+                 'St. Louis Blues' = 'STL',
+                 'Los Angeles Kings' = 'LAK',
+                 'Philadelphia Flyers' = 'PHI',
+                 'Dallas Stars' = 'DAL',
+                 'Vancouver Canucks' = 'VAN',
+                 'Buffalo Sabres' = 'BUF',
+                 'New York Islanders' = 'NYI',
+                 'Carolina Hurricanes' = 'CAR',
+                 'Colorado Avalanche' = 'COL',
+                 'Calgary Flames' = 'CGY',
+                 'Arizona Coyotes' = 'ARI',
+                 'Edmonton Oilers' = 'EDM',
+                 'Washington Capitals' = 'WSH',
+                 'New Jersey Devils' = 'NJD',
+                 'San Jose Sharks' = 'SJS',
+                 'Tampa Bay Lightning' = 'TBL',
+                 'Ottawa Senators' = 'OTT',
+                 'Anaheim Ducks' = 'ANA',
+                 'Florida Panthers' = 'FLA',
+                 'Nashville Predators' = 'NSH',
+                 'Winnipeg Jets' = 'WPG',
+                 'Columbus Blue Jackets' = 'CBJ',
+                 'Minnesota Wild' = 'MIN',
+                 'Vegas Golden Knights' = 'VEG')
+  h <- lookup[home]
+  if (d < as.Date('2014-08-01') & h == 'ARI'){
+    h <- 'PHX'
+  } else if (d < as.Date('2011-08-01') & h == 'WPG'){
+    h <- 'ATL'
+  }
+  return(h)
+}

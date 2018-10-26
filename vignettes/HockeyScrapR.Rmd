@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 #Introduction
 HockeyScrapR is a collection of tools for scraping information from various sites to use in hockey analytics. 
 

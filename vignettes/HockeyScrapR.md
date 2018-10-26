@@ -1,7 +1,7 @@
 ---
 title: "HockeyScrapR Usage"
 author: "Philip Bulisnk"
-date: "2018-02-24"
+date: "2018-08-03"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -11,6 +11,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 
 
 
@@ -44,11 +45,7 @@ The rosters for teams change almost daily, depending on coaching decisions, inju
 I'm interested just in just the rosters from one team, Toronto, but you would normally collect the whole league at once. 
 
 ```r
-teamTOR <- data.frame(
-  URL = "http://www.dailyfaceoff.com/teams/toronto-maple-leafs/line-combinations/", 
-  Team="TOR", 
-  stringsAsFactors = FALSE)
-roster<-getCurrentRosters(teamUrlList = teamTOR, sleep = 0, progress = FALSE)
+roster<-getCurrentRosters(teams = 'TOR', sleep = 0, progress = FALSE)
 ```
 
 Normally, just calling `getCurrentRosters()` would be the typical usage. 
@@ -57,17 +54,15 @@ This returns a roster list, which we can explore. Here's Toronto's forwards:
 
 ```r
 roster$TOR$Forwards
-#>  [1] "Patrick Marleau"    "Zach Hyman"         "James van Riemsdyk"
-#>  [4] "Leo Komarov"        "Nazem Kadri"        "William Nylander"  
-#>  [7] "Tyler Bozak"        "Dominic Moore"      "Mitch Marner"      
-#> [10] "Connor Brown"       "Kasperi Kapanen"    "Josh Leivo"
+#> [1] "Par Lindholm"
 ```
+Note that this returns a flat list, not a matrix of pairings. One could generate them by taking the first, fifth, and ninth player as the 'first liners', etc., but the ordering is subject to change depending on total skater numbers. 
 
-And their goalies:
+Similarly, here are their active goalies:
 
 ```r
 roster$TOR$Goalies
-#> [1] "Frederik Andersen" "Curtis McElhinney"
+#> character(0)
 ```
 
 And here's the Injury Reserve:
@@ -81,7 +76,7 @@ These were all current as of the updated date:
 
 ```r
 roster$TOR$UpdateDate
-#> [1] "2018-02-23"
+#> [1] "2018-07-14"
 ```
 
 There are a few other categories scraped, here's the full list:

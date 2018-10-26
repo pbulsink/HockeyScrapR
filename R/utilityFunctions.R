@@ -35,3 +35,9 @@ getCurrentSeason <- function() {
   }
   return(year)
 }
+
+uncommentHTML<-function(htmlpage){
+  htmlpage<-gsub(pattern = '<!--', replacement = '', x = htmlpage)
+  htmlpage<-gsub(pattern = '-->', replacement = '', x = htmlpage)
+  return(htmlpage)
+}

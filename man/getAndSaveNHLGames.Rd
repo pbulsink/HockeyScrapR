@@ -4,8 +4,8 @@
 \alias{getAndSaveNHLGames}
 \title{Download and save NHL Games}
 \usage{
-getAndSaveNHLGames(start = 1918, end = getCurrentSeason(), sleep = 30,
-  data_dir = "./data/scores/", progress = TRUE, ...)
+getAndSaveNHLGames(start = 1918, end = getCurrentSeason(),
+  sleep = 30, data_dir = "./data/scores/", progress = TRUE, ...)
 }
 \arguments{
 \item{start}{Starting season to download. Season is \code{value-1 to value} (eg. start=1918 --> 1917-1918 season)}

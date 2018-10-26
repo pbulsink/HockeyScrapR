@@ -17,6 +17,7 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
                           Team = c("ANA", "ARI", "BOS", "BUF", "CGY", "CAR", "CHI", "COL", "CBJ", "DAL", "DET", "EDM",
   "FLA", "LAK", "MIN", "MTL", "NSH","NJD", "NYI", "NYR", "OTT", "PHI", "PIT", "SJS", "STL", "TBL", "TOR", "VAN", "WSH", "WPG", "VGK"), stringsAsFactors = FALSE)
 
+
 #' Get Current estimated rosters
 #'
 #' @param sleep The amount of time to sleep between requests
@@ -32,7 +33,6 @@ teamURLList <- data.frame(URL = c("http://www.dailyfaceoff.com/teams/anaheim-duc
 #' \item{Injuries}{Any players on the injury reserve}
 #' \item{updateDate}{The date the Team's page was updated}
 #' @export
-
 getCurrentRosters <- function(sleep = 30, teams = NULL, progress=TRUE) {
   if(!is.null(teams)){
     if(sum(!teams %in% teamURLList$Team) != 0){

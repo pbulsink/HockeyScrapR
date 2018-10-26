@@ -4,8 +4,8 @@
 \alias{updatePlayers.HR}
 \title{Update player information (don't rescrape old players) from Hockey-Reference.com.}
 \usage{
-updatePlayers.HR(player_data, data_dir = "./data/players/", years_back = 1,
-  player_list = NULL, ...)
+updatePlayers.HR(player_data, data_dir = "./data/players/",
+  years_back = 1, player_list = NULL, ...)
 }
 \arguments{
 \item{player_data}{The player_data data.frame to update}
