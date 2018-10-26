@@ -57,8 +57,8 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
       ## In case of download error, don't process
       regular <- tables$games
       playoff <- tables$games_playoffs
-      utils::write.csv(regular, file = paste0(data_dir, "wha", i - 1, i, ".csv"))
-      utils::write.csv(playoff, file = paste0(data_dir, "wha", i - 1, i, "Playoffs.csv"))
+      utils::write.csv(regular, file = file.path(data_dir, paste0("wha", i - 1, i, ".csv")))
+      utils::write.csv(playoff, file = file.path(data_dir, paste0("wha", i - 1, i, "Playoffs.csv")))
     }
     Sys.sleep(sleep)
     if (progress && start != end) {
@@ -144,9 +144,9 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       ## In case of download error, don't process
       regular <- tables$games
       playoff <- tables$games_playoffs
-      utils::write.csv(regular, file = paste0(data_dir, "", i - 1, i, ".csv"))
+      utils::write.csv(regular, file = file.path(data_dir, paste0(i - 1, i, ".csv")))
       if (!is.null(playoff)) {
-        utils::write.csv(playoff, file = paste0(data_dir, "", i - 1, i, "Playoffs.csv"))
+        utils::write.csv(playoff, file = file.patch(data_dir, paste0(i - 1, i, "Playoffs.csv")))
       }
     }
     Sys.sleep(sleep)
@@ -208,21 +208,21 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   nhl_year_list <- nhl_year_list[nhl_year_list != 2005]
   message("reading NHL data")
   for (year in 1:length(nhl_year_list)) {
-    df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[year] -
-      1, nhl_year_list[year], ".csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+    df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[year] -
+      1, nhl_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
   }
   if (playoffs) {
     if (length(nhl_year_list) > 1) {
       for (year in 1:(length(nhl_year_list) - 1)) {
         if (nhl_year_list[year] != 1920) {
-          df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[year] -
-          1, nhl_year_list[year], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+          df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[year] -
+          1, nhl_year_list[year], "Playoffs.csv")), stringsAsFactors = FALSE)[2:7])
         }
       }
     }
     if (lastPlayoffs) {
-      df_nhl <- rbind(df_nhl, utils::read.csv(paste(data_dir, nhl_year_list[length(nhl_year_list)] -
-        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv", sep = ""),
+      df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[length(nhl_year_list)] -
+        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv")),
         stringsAsFactors = FALSE)[2:7])
     }
   }
@@ -232,13 +232,13 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   if (length(wha_year_list) > 0) {
     message("reading WHA data")
     for (year in 1:length(wha_year_list)) {
-      df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
-        1, wha_year_list[year], ".csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+      df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+        1, wha_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
     }
     if (playoffs) {
       for (year in 1:(length(wha_year_list))) {
-        df_wha <- rbind(df_wha, utils::read.csv(paste(data_dir, "wha", wha_year_list[year] -
-          1, wha_year_list[year], "Playoffs.csv", sep = ""), stringsAsFactors = FALSE)[2:7])
+        df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+          1, wha_year_list[year], "Playoffs.csv")), stringsAsFactors = FALSE)[2:7])
       }
     }
 
@@ -383,7 +383,7 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
   getAndSaveWHAGames(data_dir = data_dir, ...)
   getAndSaveNHLGames(data_dir = data_dir, ...)
   hockey_data <- readHockeyData(data_dir = data_dir, ...)
-  saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
+  saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
   return(hockey_data)
 }
 
@@ -421,7 +421,7 @@ updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
       new_hockey_data$VisitorGoals<-NULL
     }
     hockey_data <- unique(dplyr::bind_rows(score_data, new_hockey_data))
-    saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
+    saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
   }
   return(hockey_data)
 }
@@ -440,6 +440,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   ...) {
   if (as.numeric(format(as.Date(from_date), "%Y")) > getCurrentSeason())
     return(FALSE)
+  message('Downloading schedule...')
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
   current_season <- getCurrentSeason()
@@ -452,6 +453,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
 
   tables <- XML::readHTMLTable(htmlpage, stringsAsFactors = FALSE)
 
+  message('Compiling Schedule...')
   schedule <- tables$games
   playoff <- tables$games_playoffs
 
@@ -467,7 +469,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   schedule$G.1 <- ""
   schedule$X <- ""
 
-  saveRDS(schedule, paste0(data_dir, "schedule.RDS"))
+  saveRDS(schedule, file.path(data_dir, "schedule.RDS"))
   return(schedule)
 
 }
