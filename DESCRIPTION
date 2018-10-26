@@ -15,7 +15,8 @@ Imports:
     progress,
     utils,
     devtools,
-    lubridate
+    lubridate,
+    dplyr
 Suggests:
     testthat,
     knitr,

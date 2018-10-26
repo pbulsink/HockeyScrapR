@@ -343,8 +343,8 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
       hockey_data$Home == "Minnesota Fighting Saints", ]$Home <- "Cleveland Crusaders",
       silent = TRUE)
 
-    hockey_data$Home <- factor(hockey_data$Home)
-    hockey_data$Visitor <- factor(hockey_data$Visitor, levels = levels(hockey_data$Home))
+    #hockey_data$Home <- factor(hockey_data$Home)
+    #hockey_data$Visitor <- factor(hockey_data$Visitor, levels = levels(hockey_data$Home))
   }
 
   if (listWinnersLosers) {
@@ -408,7 +408,19 @@ updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
     getAndSaveNHLGames(data_dir = data_dir, start = getCurrentSeason(), ...)
     new_hockey_data <- readHockeyData(data_dir = data_dir, nhl_year_list = c(getCurrentSeason()),
       wha_year_list = c(), playoffs = FALSE, lastPlayoffs = FALSE)
-    hockey_data <- unique(rbind(score_data, new_hockey_data))
+    if('HomeTeam' %in% colnames(score_data)){
+      new_hockey_data$HomeTeam<-new_hockey_data$Home
+      new_hockey_data$Home<-NULL
+    }
+    if('AwayTeam' %in% colnames(score_data)){
+      new_hockey_data$AwayTeam<-new_hockey_data$Visitor
+      new_hockey_data$Visitor<-NULL
+    }
+    if('AwayGoals' %in% colnames(score_data)){
+      new_hockey_data$AwayGoals<-new_hockey_data$VisitorGoals
+      new_hockey_data$VisitorGoals<-NULL
+    }
+    hockey_data <- unique(dplyr::bind_rows(score_data, new_hockey_data))
     saveRDS(hockey_data, paste0(data_dir, "scores-", Sys.Date(), ".RDS"))
   }
   return(hockey_data)
