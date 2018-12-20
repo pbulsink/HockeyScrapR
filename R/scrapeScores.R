@@ -365,7 +365,7 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
 #' Scrape and clean all score data
 #'
 #' This is a one-command function to scrape and clean all score data available from Hockey-Reference.com.
-#' Also saves results to a dated .RDS file.
+#' Also saves results to a .RDS file.
 #'
 #' @param data_dir Directory to store data in.
 #' @param ... Additional parameters to pass
@@ -383,7 +383,8 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
   getAndSaveWHAGames(data_dir = data_dir, ...)
   getAndSaveNHLGames(data_dir = data_dir, ...)
   hockey_data <- readHockeyData(data_dir = data_dir, ...)
-  saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
+  saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
+
   return(hockey_data)
 }
 
@@ -391,6 +392,7 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #'
 #' @param score_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
+#' @param
 #' @param ... Additional parameters to pass
 #'
 #' @return updated scores information data.frame
@@ -421,7 +423,8 @@ updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
       new_hockey_data$VisitorGoals<-NULL
     }
     hockey_data <- unique(dplyr::bind_rows(score_data, new_hockey_data))
-    saveRDS(hockey_data, file.path(data_dir, paste0("scores-", Sys.Date(), ".RDS")))
+
+    saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
   }
   return(hockey_data)
 }
