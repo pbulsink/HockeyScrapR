@@ -34,7 +34,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
     end <- 1979
   }
 
-  message("Scraping WHA games")
+  message("Scraping WHA games...")
   if (progress && start != end) {
     pb <- progress::progress_bar$new(
       format = "  downloading seasons [:bar] :percent eta: :eta",
@@ -116,7 +116,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
     end <- getCurrentSeason()
   }
 
-  message("Scraping NHL games")
+  message("Scraping NHL games...")
   if (progress && start != end){
     pb <- progress::progress_bar$new(
       format = "  downloading players [:bar] :percent eta: :eta",
@@ -206,7 +206,7 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
     X.1 = NULL, stringsAsFactors = FALSE)
   df_wha <- df_nhl
   nhl_year_list <- nhl_year_list[nhl_year_list != 2005]
-  message("reading NHL data")
+  message("Processing NHL score data...")
   for (year in 1:length(nhl_year_list)) {
     df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[year] -
       1, nhl_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
@@ -230,7 +230,7 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   df_nhl$League <- "NHL"
 
   if (length(wha_year_list) > 0) {
-    message("reading WHA data")
+    message("Processing WHA score data...")
     for (year in 1:length(wha_year_list)) {
       df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
         1, wha_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
