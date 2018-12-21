@@ -146,7 +146,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
       playoff <- tables$games_playoffs
       utils::write.csv(regular, file = file.path(data_dir, paste0(i - 1, i, ".csv")))
       if (!is.null(playoff)) {
-        utils::write.csv(playoff, file = file.patch(data_dir, paste0(i - 1, i, "Playoffs.csv")))
+        utils::write.csv(playoff, file = file.path(data_dir, paste0(i - 1, i, "Playoffs.csv")))
       }
     }
     Sys.sleep(sleep)
@@ -232,12 +232,12 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   if (length(wha_year_list) > 0) {
     message("Processing WHA score data...")
     for (year in 1:length(wha_year_list)) {
-      df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+      df_wha <- rbind(df_wha, utils::read.csv(file.path(data_dir, paste0("wha", wha_year_list[year] -
         1, wha_year_list[year], ".csv")), stringsAsFactors = FALSE)[2:7])
     }
     if (playoffs) {
       for (year in 1:(length(wha_year_list))) {
-        df_wha <- rbind(df_wha, utils::read.csv(file.patch(data_dir, paste0("wha", wha_year_list[year] -
+        df_wha <- rbind(df_wha, utils::read.csv(file.path(data_dir, paste0("wha", wha_year_list[year] -
           1, wha_year_list[year], "Playoffs.csv")), stringsAsFactors = FALSE)[2:7])
       }
     }
@@ -248,6 +248,10 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
   df <- rbind(df_nhl, df_wha)
 
   df <- cleanHockeyData(hockey_data = df, ...)
+
+  i <- sapply(df, is.factor)
+  df[i] <- lapply(df[i], as.character)
+
   return(df)
 }
 
@@ -348,10 +352,10 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
   }
 
   if (listWinnersLosers) {
-    hockey_data$Winner <- factor(apply(hockey_data, 1, function(x) ifelse(x[3] >
-      x[5], x[2], x[4])), levels = levels(hockey_data$Home))
-    hockey_data$Loser <- factor(apply(hockey_data, 1, function(x) ifelse(x[3] <=
-      x[5], x[2], x[4])), levels = levels(hockey_data$Home))
+    hockey_data$Winner <- apply(hockey_data, 1, function(x) ifelse(x[3] >
+      x[5], x[2], x[4]))
+    hockey_data$Loser <- apply(hockey_data, 1, function(x) ifelse(x[3] <=
+      x[5], x[2], x[4]))
   }
 
   if (eloResults) {

@@ -148,7 +148,7 @@ test_that("Reading Hockey Data Works", {
 test_that("Scores Update", {
     up_to_date_scores <- updateScores(out_of_date_scores, "./", sleep = 10, progress=FALSE)
     expect_true(nrow(up_to_date_scores) > nrow(out_of_date_scores))
-    f1 <- paste0("./scores-", Sys.Date(), ".RDS")
+    f1 <- "./scores.RDS"
     f2 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
     expect_true(file.exists(f1))
     expect_true(file.exists(f2))
@@ -163,7 +163,7 @@ test_that("Scraper works", {
     f2 <- "./19751976Playoffs.csv"
     f3 <- "./wha19751976.csv"
     f4 <- "./wha19751976Playoffs.csv"
-    f5 <- paste0("./scores-", Sys.Date(), ".RDS")
+    f5 <- "./scores.RDS"
 
     expect_equivalent(scraped_scores, sscores)
 
