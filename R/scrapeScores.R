@@ -46,8 +46,8 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
   }
 
   for (i in c(start:end)) {
-    url <- paste0("http://www.hockey-reference.com/leagues/WHA_", i, "_games.html")
-    htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
+    url <- paste0("https://www.hockey-reference.com/leagues/WHA_", i, "_games.html")
+    htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     if (class(htmlpage) == "try-error") {
       tables <- NULL
     } else {
@@ -132,8 +132,8 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
     if (i == 2005) {
       next
     }
-    url <- paste0("http://www.hockey-reference.com/leagues/NHL_", i, "_games.html")
-    htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
+    url <- paste0("https://www.hockey-reference.com/leagues/NHL_", i, "_games.html")
+    htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     if (class(htmlpage) == "try-error") {
       tables <- NULL
     } else {
@@ -396,7 +396,6 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #'
 #' @param score_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
-#' @param
 #' @param ... Additional parameters to pass
 #'
 #' @return updated scores information data.frame
@@ -451,9 +450,9 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
   current_season <- getCurrentSeason()
-  schedule_url <- paste0("http://www.hockey-reference.com/leagues/NHL_", current_season,
+  schedule_url <- paste0("https://www.hockey-reference.com/leagues/NHL_", current_season,
     "_games.html")
-  htmlpage <- getURLInternal(schedule_url, referer = "http://www.hockey-reference.com")
+  htmlpage <- getURLInternal(schedule_url, referer = "https://www.hockey-reference.com")
 
   if (class(htmlpage) == "try-error")
     return(FALSE)
@@ -536,7 +535,7 @@ scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
     away <- getHome(away, scores$Date[[i]])
     dated <- format(scores$Date[[i]], "%Y%m%d")
     url<-paste0("https://www.hockey-reference.com/boxscores/",dated,"0",home,".html")
-    htmlpage <- getURLInternal(url, referer = "http://www.hockey-reference.com/")
+    htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     htmlpage <- uncommentHTML(htmlpage)
     if (class(htmlpage) == "try-error") {
       tables <- NULL
