@@ -372,6 +372,7 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
 #' Also saves results to a .RDS file.
 #'
 #' @param data_dir Directory to store data in.
+#' @param save_rds Whether to save rds file
 #' @param ... Additional parameters to pass
 #'
 #' @return scores information data.frame
@@ -381,13 +382,15 @@ cleanHockeyData <- function(hockey_data, cleanTeams = TRUE, identifyTies = TRUE,
 #' \dontrun{
 #' scrapeScores()
 #' }
-scrapeScores <- function(data_dir = "./data/scores/", ...) {
+scrapeScores <- function(data_dir = "./data/scores/", save_rds = FALSE, ...) {
   if (!dir.exists(data_dir))
     dir.create(data_dir, recursive = TRUE)
   getAndSaveWHAGames(data_dir = data_dir, ...)
   getAndSaveNHLGames(data_dir = data_dir, ...)
   hockey_data <- readHockeyData(data_dir = data_dir, ...)
-  saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
+  if(save_rds){
+    saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
+  }
 
   return(hockey_data)
 }
@@ -396,7 +399,7 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #'
 #' @param score_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
-#' @param
+#' @param save_rds
 #' @param ... Additional parameters to pass
 #'
 #' @return updated scores information data.frame
@@ -405,7 +408,7 @@ scrapeScores <- function(data_dir = "./data/scores/", ...) {
 #' @examples
 #' \dontrun{updateScores()}
 #' \dontrun{updatePlayers(score_data, data_dir = './data/'}
-updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
+updateScores <- function(score_data, data_dir = "./data/scores/", save_rds = FALSE, ...) {
   if (!dir.exists(data_dir)) {
     message("Data directory '", data_dir, "' does not exist. Scraping all scores.")
     hockey_data <- scrapeScores(data_dir = data_dir, ...)
@@ -428,7 +431,9 @@ updateScores <- function(score_data, data_dir = "./data/scores/", ...) {
     }
     hockey_data <- unique(dplyr::bind_rows(score_data, new_hockey_data))
 
-    saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
+    if(save_rds){
+      saveRDS(hockey_data, file.path(data_dir, "scores.RDS"))
+    }
   }
   return(hockey_data)
 }
