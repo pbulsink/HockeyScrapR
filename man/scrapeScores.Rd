@@ -16,7 +16,7 @@ scores information data.frame
 }
 \description{
 This is a one-command function to scrape and clean all score data available from Hockey-Reference.com.
-Also saves results to a dated .RDS file.
+Also saves results to a .RDS file.
 }
 \examples{
 \dontrun{
