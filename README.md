@@ -15,7 +15,7 @@ Install these tools in R using `devtools`:
 ```R
 install.packages('devtools')
 
-devtools::install_github(pbulsink/HockeyScrapR)
+devtools::install_github('pbulsink/HockeyScrapR')
 ```
 
 More information on how to use this package can be found in the vignette. You can read it [here](https://github.com/pbulsink/HockeyScrapR/blob/master/vignettes/HockeyScrapR.md)
