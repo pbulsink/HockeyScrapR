@@ -407,8 +407,7 @@ scrapeScores <- function(data_dir = "./data/scores/", save_rds = FALSE, ...) {
 #'
 #' @examples
 #' \dontrun{updateScores()}
-#' \dontrun{updatePlayers(score_data, data_dir = './data/'}
-updateScores <- function(score_data, data_dir = "./data/scores/", save_rds = FALSE, ...) {
+updateScores <- function(score_data, data_dir = "./data/scores/", save_rds = FALSE, playoffs = FALSE, last_playoffs = FALSE, ...) {
   if (!dir.exists(data_dir)) {
     message("Data directory '", data_dir, "' does not exist. Scraping all scores.")
     hockey_data <- scrapeScores(data_dir = data_dir, ...)
@@ -416,7 +415,7 @@ updateScores <- function(score_data, data_dir = "./data/scores/", save_rds = FAL
     last_score_date <- max(score_data$Date)
     getAndSaveNHLGames(data_dir = data_dir, start = getCurrentSeason(), ...)
     new_hockey_data <- readHockeyData(data_dir = data_dir, nhl_year_list = c(getCurrentSeason()),
-      wha_year_list = c(), playoffs = FALSE, lastPlayoffs = FALSE)
+      wha_year_list = c(), playoffs = playoffs, lastPlayoffs = last_playoffs)
     if('HomeTeam' %in% colnames(score_data)){
       new_hockey_data$HomeTeam<-new_hockey_data$Home
       new_hockey_data$Home<-NULL
