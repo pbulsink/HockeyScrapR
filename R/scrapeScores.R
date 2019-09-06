@@ -119,7 +119,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
   message("Scraping NHL games...")
   if (progress && start != end){
     pb <- progress::progress_bar$new(
-      format = "  downloading players [:bar] :percent eta: :eta",
+      format = "  downloading seasons [:bar] :percent eta: :eta",
       clear = FALSE,
       width = 80,
       total=end-start+1
@@ -151,7 +151,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
     }
     Sys.sleep(sleep)
     if (progress && start != end){
-      utils::setTxtProgressBar(pb, i)
+      pb$tick()
     }
   }
   return(TRUE)
@@ -531,7 +531,13 @@ scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
   scores$AwayShifts <- NA
   scores$AwayTOI <- NA
 
-  pb <- utils::txtProgressBar(0, nrow(scores), style = 3)
+  pb <- progress::progress_bar$new(
+    format = "  downloading advanced stats [:bar] :percent eta: :eta",
+    clear = FALSE,
+    width = 80,
+    total=nrow(scores)
+  )
+  pb$tick(0)
   errorscount<-0
   for(i in 1:nrow(scores)){
     home <- as.character(scores$HomeTeam[[i]])
@@ -619,7 +625,7 @@ scrapeAdvancedStats <- function(scores=NULL, data_dir = "./data/", sleep=10) {
     if(errorscount == 30) break
 
     Sys.sleep(sleep)
-    utils::setTxtProgressBar(pb, i)
+    pb$tick()
   }
 
   saveRDS(scores, file = file.path(data_dir, 'scoresComplete2.RDS'))
