@@ -399,7 +399,7 @@ scrapeScores <- function(data_dir = "./data/scores/", save_rds = FALSE, ...) {
 #'
 #' @param score_data The player_data data.frame to update
 #' @param data_dir The data dir of stored player information
-#' @param save_rds
+#' @param save_rds whether to save the scores as an Rds file
 #' @param ... Additional parameters to pass
 #'
 #' @return updated scores information data.frame

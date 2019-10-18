@@ -4,10 +4,12 @@
 \alias{scrapeScores}
 \title{Scrape and clean all score data}
 \usage{
-scrapeScores(data_dir = "./data/scores/", ...)
+scrapeScores(data_dir = "./data/scores/", save_rds = FALSE, ...)
 }
 \arguments{
 \item{data_dir}{Directory to store data in.}
+
+\item{save_rds}{Whether to save rds file}
 
 \item{...}{Additional parameters to pass}
 }

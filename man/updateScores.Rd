@@ -4,12 +4,15 @@
 \alias{updateScores}
 \title{Update scores information (don't rescrape old scores).}
 \usage{
-updateScores(score_data, data_dir = "./data/scores/", ...)
+updateScores(score_data, data_dir = "./data/scores/", save_rds = FALSE,
+  playoffs = FALSE, last_playoffs = FALSE, ...)
 }
 \arguments{
 \item{score_data}{The player_data data.frame to update}
 
 \item{data_dir}{The data dir of stored player information}
+
+\item{save_rds}{whether to save the scores as an Rds file}
 
 \item{...}{Additional parameters to pass}
 }
@@ -21,5 +24,4 @@ Update scores information (don't rescrape old scores).
 }
 \examples{
 \dontrun{updateScores()}
-\dontrun{updatePlayers(score_data, data_dir = './data/'}
 }

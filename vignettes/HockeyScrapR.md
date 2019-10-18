@@ -1,7 +1,7 @@
 ---
 title: "HockeyScrapR Usage"
 author: "Philip Bulisnk"
-date: "2018-08-03"
+date: "2019-10-18"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -54,7 +54,7 @@ This returns a roster list, which we can explore. Here's Toronto's forwards:
 
 ```r
 roster$TOR$Forwards
-#> [1] "Par Lindholm"
+#> character(0)
 ```
 Note that this returns a flat list, not a matrix of pairings. One could generate them by taking the first, fifth, and ninth player as the 'first liners', etc., but the ordering is subject to change depending on total skater numbers. 
 
@@ -76,7 +76,7 @@ These were all current as of the updated date:
 
 ```r
 roster$TOR$UpdateDate
-#> [1] "2018-07-14"
+#> [1] "2019-10-18"
 ```
 
 There are a few other categories scraped, here's the full list:
