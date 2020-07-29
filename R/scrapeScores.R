@@ -46,7 +46,7 @@ getAndSaveWHAGames <- function(start = 1973, end = 1979, sleep = 30, data_dir = 
   }
 
   for (i in c(start:end)) {
-    url <- paste0("https://www.hockey-reference.com/leagues/WHA_", i, "_games.html")
+    url <- paste0("https://www.hockey-reference.com/leagues/WHA_", i, ".html")
     htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     if (class(htmlpage) == "try-error") {
       tables <- NULL
@@ -132,7 +132,7 @@ getAndSaveNHLGames <- function(start = 1918, end = getCurrentSeason(), sleep = 3
     if (i == 2005) {
       next
     }
-    url <- paste0("https://www.hockey-reference.com/leagues/NHL_", i, "_games.html")
+    url <- paste0("https://www.hockey-reference.com/leagues/NHL_", i, ".html")
     htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     if (class(htmlpage) == "try-error") {
       tables <- NULL
@@ -456,7 +456,7 @@ getSchedule <- function(from_date = Sys.Date(), data_dir = "./data/scores", incl
     dir.create(data_dir, recursive = TRUE)
   current_season <- getCurrentSeason()
   schedule_url <- paste0("https://www.hockey-reference.com/leagues/NHL_", current_season,
-    "_games.html")
+    ".html")
   htmlpage <- getURLInternal(schedule_url, referer = "https://www.hockey-reference.com")
 
   if (class(htmlpage) == "try-error")
