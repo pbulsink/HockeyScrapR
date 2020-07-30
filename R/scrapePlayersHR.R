@@ -17,8 +17,8 @@ getPlayerList.HR <- function(sleep = 30, letters = letters) {
     Active = character())
   for (letter in letters) {
     message(letter)
-    url <- paste0("https://www.hockey--reference.com/players/", letter, "/")
-    raw_player_list <- getURLInternal(url, referer = "https://www.hockey--reference.com/")
+    url <- paste0("https://www.hockey-reference.com/players/", letter, "/")
+    raw_player_list <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
     pl <- stringr::str_match_all(raw_player_list, pattern)
     pl <- as.data.frame(pl[1], stringsAsFactors = FALSE)
     colnames(pl) <- c("Complete", "BlnNHL", "URL", "Name", "Active")
@@ -43,9 +43,8 @@ getPlayerList.HR <- function(sleep = 30, letters = letters) {
 #'
 #' @keywords internal
 scrapePlInfo.HR <- function(url) {
-  htmlpage <- getURLInternal(url, referer = "https://www.hockey--reference.com/")
-  if (class(htmlpage) == "try-error")
-    return(NULL)
+  htmlpage <- getURLInternal(url, referer = "https://www.hockey-reference.com/")
+
   htmlpage <- gsub(htmlpage, pattern = "<!--", replacement = "")
   htmlpage <- gsub(htmlpage, pattern = "-->", replacement = "")
 
@@ -255,7 +254,7 @@ getPlayerStats.HR <- function(player_list, sleep = 30, progress=TRUE) {
   while (player < nrow(plist)) {
     player <- player + 1
     # prep HTML
-    url <- paste0("https://www.hockey--reference.com", plist[player, "URL"])
+    url <- paste0("https://www.hockey-reference.com", plist[player, "URL"])
 
     pname <- plist[player, "Name"]
     if (grepl("02.html", url, fixed = TRUE)) {

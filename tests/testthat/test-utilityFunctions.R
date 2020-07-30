@@ -9,15 +9,12 @@ test_that("Test getURLInternal Returns HTML Page", {
 })
 
 test_that("Test bad getURLInternal Throws Messages", {
-    urlscraped <- getURLInternal("http://notarealwebpage.thisisntone/nope")
-    expect_type(object = urlscraped, type = "character")
-    expect_true(class(urlscraped) == "try-error")
-    expect_message(getURLInternal("http://notarealwebpage.thisisntone/nope"), "HTML Try Error on:")
+    expect_error(getURLInternal("http://notarealwebpage.thisisntone.com/nope"))
 })
 
 test_that("Get Current Season works", {
     actual_season <- as.numeric(format(Sys.Date(), "%Y")) + 1
-    if (as.numeric(format(Sys.Date(), "%m")) < 8) {
+    if (as.numeric(format(Sys.Date(), "%m")) < 9) {
         actual_season <- actual_season - 1
     }
     expect_equal(getCurrentSeason(), actual_season)

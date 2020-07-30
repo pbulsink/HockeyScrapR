@@ -8,7 +8,7 @@ Maintainer: Philip Bulsink <bulsinkp@gmail.com>
 Description: Tools to scrape data from Hockey-Reference.com, DailyFaceoff.com, and QuantHockey.com.
 License: MIT + file LICENSE
 Imports:
-    RCurl,
+    httr,
     plyr,
     stringr,
     XML,
