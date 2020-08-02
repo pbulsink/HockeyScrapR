@@ -186,10 +186,10 @@ pl_ab <- structure(list(Complete = c("<p class=\"nhl\"><a href=\"/players/a/aalt
   class = "data.frame")
 
 pl_list_oldnew <- structure(list(Complete = c("<p class=\"nhl\"><a href=\"/players/a/aaltoan01.html\">Antti Aalto</a> (1998-2001",
-  "<p class=\"nhl\"><a href=\"/players/a/abdelju01.html\">Justin Abdelkader</a> (2007-2017", "<p class=\"nhl\"><a href=\"/players/a/almasre01.html\">Red Almas</a> (1946-1953"),
+  "<p class=\"nhl\"><a href=\"/players/a/abdelju01.html\">Justin Abdelkader</a> (2007-2020", "<p class=\"nhl\"><a href=\"/players/a/almasre01.html\">Red Almas</a> (1946-1953"),
   BlnNHL = structure(c(1L, 1L, 1L), .Label = c("TRUE", "FALSE"), class = "factor"), URL = c("/players/a/aaltoan01.html",
     "/players/a/abdelju01.html", "/players/a/almasre01.html"), Name = c("Antti Aalto", "Justin Abdelkader", "Red Almas"),
-  Active = c("1998-2001", "2007-2017", "1946-1953")), .Names = c("Complete", "BlnNHL", "URL", "Name", "Active"), row.names = c(NA,
+  Active = c("1998-2001", "2007-2020", "1946-1953")), .Names = c("Complete", "BlnNHL", "URL", "Name", "Active"), row.names = c(NA,
   3L), class = "data.frame")
 
 pl_data_oldnew <- structure(list(PlayerStats = structure(list(Season = structure(c(1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L,

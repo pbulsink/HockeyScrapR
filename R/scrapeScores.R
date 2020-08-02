@@ -221,9 +221,15 @@ readHockeyData <- function(data_dir = "./data/scores/", nhl_year_list = c(1918:g
       }
     }
     if (lastPlayoffs) {
-      df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[length(nhl_year_list)] -
-        1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv")),
-        stringsAsFactors = FALSE)[2:7])
+      tryCatch(expr =
+        df_nhl <- rbind(df_nhl, utils::read.csv(file.path(data_dir, paste0(nhl_year_list[length(nhl_year_list)] -
+          1, nhl_year_list[length(nhl_year_list)], "Playoffs.csv")),
+          stringsAsFactors = FALSE)[2:7]),
+        error = function(e) message("Error in reading file ",
+                                    file.path(data_dir, paste0(nhl_year_list[length(nhl_year_list)] - 1,
+                                                               nhl_year_list[length(nhl_year_list)], "Playoffs.csv")),
+                                    ". Maybe Last Playoffs haven't started?")
+        )
     }
   }
 

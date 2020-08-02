@@ -148,12 +148,9 @@ test_that("Reading Hockey Data Works", {
 test_that("Scores Update", {
     up_to_date_scores <- updateScores(out_of_date_scores, "./", sleep = 10, progress=FALSE)
     expect_true(nrow(up_to_date_scores) > nrow(out_of_date_scores))
-    f1 <- "./scores.RDS"
-    f2 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
+    f1 <- paste("./",getCurrentSeason()-1, getCurrentSeason(), '.csv', sep="")
     expect_true(file.exists(f1))
-    expect_true(file.exists(f2))
     try_delete(f1)
-    try_delete(f2)
 })
 
 test_that("Scraper works", {
@@ -163,7 +160,6 @@ test_that("Scraper works", {
     f2 <- "./19751976Playoffs.csv"
     f3 <- "./wha19751976.csv"
     f4 <- "./wha19751976Playoffs.csv"
-    f5 <- "./scores.RDS"
 
     expect_equivalent(scraped_scores, sscores)
 
@@ -171,12 +167,10 @@ test_that("Scraper works", {
     expect_true(file.exists(f2))
     expect_true(file.exists(f3))
     expect_true(file.exists(f4))
-    expect_true(file.exists(f5))
     try_delete(f1)
     try_delete(f2)
     try_delete(f3)
     try_delete(f4)
-    try_delete(f5)
 })
 
 test_that("Schedule returns full cleaned season", {
