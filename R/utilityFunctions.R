@@ -10,17 +10,21 @@
 #' @keywords internal
 getURLInternal <- function(url, referer = "http://www.google.ca") {
   agents <- "HockeyScrapR http://github.com/pbulsink/HockeyScrapR"
-  htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
-    header = TRUE, followLocation = TRUE, useragent = agents)),
-    silent = TRUE)
+  # htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
+  #   header = TRUE, followLocation = TRUE, useragent = agents)),
+  #   silent = TRUE)
 
-  if (class(htmlpage) == "try-error") {
-    message(paste0("HTML Try Error on: ", url))
-    htmlpage <- try(RCurl::getURL(url, header = FALSE, .opts = RCurl::curlOptions(referer = referer,
-      header = TRUE, followLocation = TRUE, useragent = agents)),
-      silent = TRUE)
+  htmlpage <- try(httr::GET(url=url, httr::user_agent(agents), httr::config("referer" = referer)))
+
+  if (httr::http_error(htmlpage)) {
+    message(paste0("HTML Try Error on: ", url, "/nStatus Code: ", htmlpage$status_code))
+    htmlpage <- try(httr::GET(url=url))
   }
-  return(htmlpage)
+  if(htmlpage$status_code == "200"){
+    return(httr::content(htmlpage, as="text"))
+  } else {
+    stop("HTML error on ", url, "/nStatus Code: ",htmlpage$status_code)
+  }
 }
 
 #' Get the current Season 'year code'. From 01 August 2016 to 31 July 2017 will return 2017
@@ -30,7 +34,7 @@ getURLInternal <- function(url, referer = "http://www.google.ca") {
 #' @export
 getCurrentSeason <- function() {
   year <- as.numeric(format(Sys.Date(), "%Y"))
-  if (as.numeric(format(Sys.Date(), "%m")) >= 8) {
+  if (as.numeric(format(Sys.Date(), "%m")) >= 9) {
     year <- year + 1
   }
   return(year)
